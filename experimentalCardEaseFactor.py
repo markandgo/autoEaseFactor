@@ -91,11 +91,11 @@ def adjust_ease():
                            review_list))
     if last_tooltip_msg is not None:
         new_msg = last_tooltip_msg + "<br><br>  *   *   *   <br><br>" + msg
-        tooltip_args = {'msg': new_msg, 'period': 9000, 'xpos': 20,
-                        'ypos': 180}
+        tooltip_args = {'msg': new_msg, 'period': 9000, 'xpos': 12,
+                        'ypos': 335}
         tooltip(**tooltip_args)
     else:
-        tooltip_args = {'msg': msg, 'period': 9000, 'xpos': 20, 'ypos': 20}
+        tooltip_args = {'msg': msg, 'period': 9000, 'xpos': 12, 'ypos': 180}
         tooltip(**tooltip_args)
     last_tooltip_msg = msg
 
