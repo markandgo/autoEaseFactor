@@ -66,9 +66,13 @@ def calculate_ease(card_id):
     # anchor this to 2500 starting out
     number_of_reviews = len(mw.col.db.list(("select ease from revlog where"
                                             " cid = ?"), card_id))
-    ease_cap = min(6000, (2500 + 350 * number_of_reviews))
+    ease_cap = min(7000, (2500 + 350 * number_of_reviews))
     if suggested_factor > ease_cap:
         suggested_factor = ease_cap
+    ease_floor = max(100, (2500 - 350 * number_of_reviews))
+    if suggested_factor < ease_floor:
+        suggested_factor = ease_floor
+
     return suggested_factor
 
 
