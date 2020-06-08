@@ -19,7 +19,7 @@ import math
 target_ratio = 0.85
 moving_average_weight = 0.2
 last_tooltip_msg = None
-
+show_stats = True
 
 def calculate_moving_average(l):
     result = l[0]
@@ -81,31 +81,37 @@ def adjust_ease():
     card_id = mw.reviewer.card.id
     calculated_ease = calculate_ease(card_id)
 
-    review_list = mw.col.db.list(("select ease from revlog where cid = ?"),
-                                 card_id)
-
-    success_rate = find_success_rate(card_id)
-    msg = ("cardID: {}<br/> sRate: {} curFactor: {} sugFactor: {}<br> rlist: "
-           "{}<br>".format(card_id, round(success_rate, 4),
-                           round(mw.reviewer.card.factor), calculated_ease,
-                           review_list))
-    if last_tooltip_msg is not None:
-        new_msg = last_tooltip_msg + "<br><br>  *   *   *   <br><br>" + msg
-        tooltip_args = {'msg': new_msg, 'period': 9000, 'xpos': 12,
-                        'ypos': 335}
-        tooltip(**tooltip_args)
-    else:
-        tooltip_args = {'msg': msg, 'period': 9000, 'xpos': 12, 'ypos': 180}
-        tooltip(**tooltip_args)
-    last_tooltip_msg = msg
-
     mw.reviewer.card.factor = calculated_ease
+
+    # tooltip messaging
+    if show_stats:
+        review_list = mw.col.db.list(("select ease from revlog where cid = ?"),
+                                     card_id)
+
+        success_rate = find_success_rate(card_id)
+
+        msg = ("cardID: {}<br/> sRate: {} curFactor: {} sugFactor: {}<br> rlist: "
+               "{}<br>".format(card_id, round(success_rate, 4),
+                               round(mw.reviewer.card.factor), calculated_ease,
+                               review_list))
+        if last_tooltip_msg is not None:
+            new_msg = (last_tooltip_msg + "<br><br>  *   *   *   <br><br>" + msg)
+            tooltip_args = {'msg': new_msg, 'period': 9000, 'x_offset': 12,
+                            'y_offset': 250}
+            tooltip(**tooltip_args)
+        else:
+            tooltip_args = {'msg': msg, 'period': 9000, 'x_offset': 12,
+                            'y_offset': 140}
+            tooltip(**tooltip_args)
+        last_tooltip_msg = msg
 
 
 addHook('showQuestion', adjust_ease)
 
 # Patching tooltip() to allow x and y offsets
 # TODO - clean up imports
+# NOTE - the change in arguments to tooltip() was accepted by the Anki devs,
+# so everything below this can be removed as soon as that goes live
 import os
 import re
 import subprocess
@@ -129,7 +135,7 @@ _tooltipTimer: Optional[QTimer] = None
 _tooltipLabel: Optional[QLabel] = None
 
 
-def tooltip(msg, period=3000, parent=None, xpos=0, ypos=100):
+def tooltip(msg, period=3000, parent=None, x_offset=0, y_offset=100):
     global _tooltipTimer, _tooltipLabel
 
     class CustomLabel(QLabel):
@@ -141,6 +147,17 @@ def tooltip(msg, period=3000, parent=None, xpos=0, ypos=100):
 
     closeTooltip()
     aw = parent or aqt.mw.app.activeWindow() or aqt.mw
+
+    # prevent tooltip values outside of main window
+    if y_offset > aw.size().height():
+        y_offset = aw.size().height()
+    if y_offset < 100:
+        y_offset = 100
+    if x_offset > mw.size().width() - 390:
+        x_offset = mw.size().width() - 390
+    if x_offset < 0:
+        x_offset = 0
+
     lab = CustomLabel(
         """\
 <table cellpadding=10>
@@ -159,7 +176,7 @@ def tooltip(msg, period=3000, parent=None, xpos=0, ypos=100):
         p.setColor(QPalette.Window, QColor("#feffc4"))
         p.setColor(QPalette.WindowText, QColor("#000000"))
         lab.setPalette(p)
-    lab.move(aw.mapToGlobal(QPoint(0+xpos, aw.height() - ypos)))
+    lab.move(aw.mapToGlobal(QPoint(0+x_offset, aw.height() - y_offset)))
     lab.show()
     _tooltipTimer = aqt.mw.progress.timer(
         period, closeTooltip, False, requiresCollection=False
