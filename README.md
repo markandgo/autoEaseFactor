@@ -1,10 +1,17 @@
 # experimentalCardEaseFactor
-Adjusts ease factor for cards individually during review an Anki.
+Dynamically adjusts ease factor on cards automatically, constantly seeking the
+right ease adjustment to hit a target success rate.
 
 See: https://eshapard.github.io/anki/thoughts-on-a-new-algorithm-for-anki.html
-for rationale.
+for the original rationale.
 
-Unlike eshapard's original, which requires four reviews before the algorithm
+Important: **You must not use an interval modifier in your deck options**.
+Your interval modifier must be set to 100% (no change) for all decks. Otherwise
+this algorithm could be constantly chasing a moving target.
+
+### Differences from eshapard's version
+
+Unlike eshapard's version, which requires four reviews before the algorithm
 kicks in, this version lets the algorithm adjust ease factors as early as
 possible. To avoid wild swings early in a card's life, I limit how much the
 algorithm can change the ease factor at first.
@@ -16,18 +23,12 @@ down.
 
 If you're used to ease factors very close to 250%, this algorithm will produce
 some alarmingly low (or high) ease factors. It will generally auto-adjust very
-quickly based on your performance, so do not be alarmed by these swings,
-especially early in a card's history. That said, this add on has not been
-tested across a population of users to see how it affects review load.
-Definitely welcome feedback on if you feel this is causing significantly more
-reviews than expected or fewer reviews than necessary. My anecdotal experience
-is that it front loads the work a bit, causing more reviews in the beginning,
-but backing off significantly after a card is well known.
-
-Important: **You must not use an interval modifier in your deck options**.
-Your interval modifier must be set to 100% (no change) for all decks. Otherwise
-this algorithm could be constantly chasing a moving target.
-
+quickly based on your performance. That said, this add on has not been tested
+across a population of users to see how it affects review load. Definitely
+provide feedback if you feel this is causing significantly more reviews than
+expected or fewer reviews than necessary. My anecdotal experience is that it
+front loads the work a bit, causing more reviews with short intervals in the
+beginning, but backing off rapidly after a card is well known.
 
 ### Installation
 Create a new folder named *experimentalCardEaseFactor* in your Anki 2.1 addons
@@ -54,7 +55,7 @@ determing your ideal ease rating. The ease factor algorithm adjusts ease for
 you, so you just need to choose either "Again" or "Good" on any given card.
 
 The YesOrNo.py addon changes your options to Pass/Fail to help streamline your
-self evaluation, similar to low-key Anki and the add-on by ja dark.
+self evaluation, similar to low-key Anki and ja dark's work that inspired it.
 
 I suggest that you use the YesOrNo addon and that you disable
 *Show next review time above answer buttons* in Tools > Preferences...
@@ -64,7 +65,10 @@ Seeing the next review times will just distract you from studying.
 eshapard
 ja-dark
 cordone
-brownbat
+brownbat (me)
+(hat tip to the MIA crew for inspiration and to the AnKing for helping me
+figure out how all this works)
 
-If you like this add-on, consider supporting the original author at this link:
+I am not requesting support, but the original author, eshapard, can receive
+tips at this link:
 https://paypal.me/eshapard/1
