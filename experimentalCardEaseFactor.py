@@ -1,13 +1,15 @@
 # inspired by https://eshapard.github.io/
 #
 # KNOWN BUGS / TODO:
-# - Undo seems to mess up scheduling. Monkey patching might work, not sure if
-# there's a better option.
+# Undo messes up scheduling. Monkey patching:
+#   https://gist.github.com/cordone/38317befecfbda6e12d4f04df4555065
 # Long tooltips fall off the screen, so I've both monkey patched tooltip() here
 #   and also submitted a PR to anki to let tooltip() take x and y offsets
-# https://gist.github.com/cordone/38317befecfbda6e12d4f04df4555065
-# - Clicking on buttons no longer works, only keyboard shortcuts.
-# - if reviews are empty (because learning) maybe assume 50%?
+#   remove that patch once that PR goes live in next version
+# Tweak initial starting assumptions (ease 2500 and 350 backoff, min/max)
+# Add config file to let 2.1 users set options
+# Config file
+#
 from __future__ import annotations
 
 
@@ -16,10 +18,14 @@ from aqt import mw
 from aqt.utils import tooltip
 import math
 
-target_ratio = 0.85
-moving_average_weight = 0.2
+config = mw.addonManager.getConfig(__name__)
+
+target_ratio = config.get('target_ratio', 0.85)
+moving_average_weight = config.get('moving_average_weight', 0.2)
+show_stats = config.get('show_stats', True)
+
 last_tooltip_msg = None
-show_stats = True
+
 
 def calculate_moving_average(l):
     result = l[0]

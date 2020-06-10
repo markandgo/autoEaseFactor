@@ -1,0 +1,5 @@
+{
+    "target_ratio": 0.85,
+    "moving_average_weight": 0.2,
+    "show_stats": true
+}
