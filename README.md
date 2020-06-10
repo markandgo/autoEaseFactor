@@ -10,11 +10,23 @@ possible. To avoid wild swings early in a card's life, I limit how much the
 algorithm can change the ease factor at first.
 
 I also incorporate a moving average, so your most recent success rate will have
-more influence than early reviews (in case it took you a long time to learn
-a card originally but now you've really got it down).
+more influence than early reviews. This helps adjust the ease more quickly when
+it took you a long time to learn a card originally but now you've really got it
+down.
+
+If you're used to ease factors very close to 250%, this algorithm will produce
+some alarmingly low (or high) ease factors. It will generally auto-adjust very
+quickly based on your performance, so do not be alarmed by these swings,
+especially early in a card's history. That said, this add on has not been
+tested across a population of users to see how it affects review load.
+Definitely welcome feedback on if you feel this is causing significantly more
+reviews than expected or fewer reviews than necessary. My anecdotal experience
+is that it front loads the work a bit, causing more reviews in the beginning,
+but backing off significantly after a card is well known.
 
 Important: **You must not use an interval modifier in your deck options**.
-Your interval modifier must be set to 100% (no change) for all decks.
+Your interval modifier must be set to 100% (no change) for all decks. Otherwise
+this algorithm could be constantly chasing a moving target.
 
 
 ### Installation
@@ -48,6 +60,11 @@ I suggest that you use the YesOrNo addon and that you disable
 *Show next review time above answer buttons* in Tools > Preferences...
 Seeing the next review times will just distract you from studying.
 
-## Shameless Donation Request
-I am not requesting any support, but if you like this add-on, consider
-supporting the original author using this link: https://paypal.me/eshapard/1
+## Acknowledgments
+eshapard
+ja-dark
+cordone
+brownbat
+
+If you like this add-on, consider supporting the original author at this link:
+https://paypal.me/eshapard/1

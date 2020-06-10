@@ -19,3 +19,12 @@ most people.
 - Show debugging information about recent reviews in a tooltip. Includes
 information on past reviews and suggested ease.
 - default: True
+
+The following are unimplemented and outlined for future use:
+
+- "starting_ease": 2500, (Starts with an assumption of 250% ease. Note per-mille, so 2500 = 250%.)
+- "min_ease": 100, (Will not lower beneath 10% ease)
+- "max_ease": 10000, (Will not raise above 1000% ease)
+- "anchor_to_previous_ease": 0.2
+Will not raise or lower ease more than 0.2 times the current ease per step.
+Smaller values lead to smaller ease adjustments.

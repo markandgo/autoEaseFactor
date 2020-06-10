@@ -1,5 +1,11 @@
 {
     "target_ratio": 0.85,
     "moving_average_weight": 0.2,
-    "show_stats": true
+    "show_stats": true,
+
+    "zzz_": "The following are unimplemented and outlined for future use",
+    "zzz_starting_ease": 2500,
+    "zzz_min_ease": 100,
+    "zzz_max_ease": 10000,
+    "zzz_anchor_to_previous_ease": 0.2
 }
