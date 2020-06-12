@@ -52,7 +52,7 @@ leash = 350
 class EaseAlgorithm(object):
 
     def __init__(self):
-        self.factor = 0
+        self.factor = starting_ease
         self.last_tooltip_msg = None
 
     @staticmethod
