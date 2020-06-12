@@ -76,18 +76,27 @@ class EaseAlgorithm(object):
         return success_rate
 
     def find_average_ease(self, card_id):
-        # time of each review in milliseconds
-        review_times = mw.col.db.list("select id from revlog where cid = ? "
-                                      "order by id", card_id)
-        if not review_times or len(review_times) < 3:
-            avg_ease = starting_ease
+        average_ease = 0
+        ease_list = mw.col.db.list("select (1000*ivl/lastIvl) from revlog"
+                                   " where cid = ? and lastIvl > 0 and "
+                                   "ivl > 0",
+                                   card_id)
+        if not ease_list:
+            average_ease = starting_ease
         else:
-            real_intervals = [t1 - t0 for t0, t1 in zip(review_times[:-1],
-                                                        review_times[1:])]
-            ratios = [(i1 / i0) * 1000 for i0, i1 in zip(real_intervals[:-1],
-                                                         real_intervals[1:])]
-            avg_ease = self.calculate_moving_average(ratios)
-        return avg_ease
+            average_ease = self.calculate_moving_average(ease_list)
+        #   ~ # Replacement on true intervals failed testing. Revisit, implement.
+        #   ~ # time of each review in milliseconds
+        #   ~ review_times = mw.col.db.list("select id from revlog where cid = ? "
+                                      #   ~ "order by id", card_id)
+        #   ~ if not review_times or len(review_times) < 3:
+            #   ~ average_ease = starting_ease
+            #   ~ real_intervals = [t1 - t0 for t0, t1 in zip(review_times[:-1],
+                                                        #   ~ review_times[1:])]
+            #   ~ ratios = [(i1 / i0) * 1000 for i0, i1 in zip(real_intervals[:-1],
+                                                         #   ~ real_intervals[1:])]
+            #   ~ average_ease = self.calculate_moving_average(ratios)
+        return average_ease
 
     def calculate_ease(self, card_id):
         success_rate = self.find_success_rate(card_id)
@@ -119,6 +128,7 @@ class EaseAlgorithm(object):
 
         # tooltip messaging
         if show_stats:
+            tooltip_duration = 90000
             review_list = mw.col.db.list(("select ease from revlog where "
                                           "cid = ?"), card_id)
 
@@ -132,12 +142,12 @@ class EaseAlgorithm(object):
                 new_msg = (self.last_tooltip_msg
                            + "<br><br>  *   *   *   <br><br>"
                            + msg)
-                tooltip_args = {'msg': new_msg, 'period': 9000, 'x_offset': 12,
-                                'y_offset': 250}
+                tooltip_args = {'msg': new_msg, 'period': tooltip_duration,
+                                'x_offset': 12, 'y_offset': 250}
                 tooltip(**tooltip_args)
             else:
-                tooltip_args = {'msg': msg, 'period': 9000, 'x_offset': 12,
-                                'y_offset': 140}
+                tooltip_args = {'msg': msg, 'period': tooltip_duration,
+                                'x_offset': 12, 'y_offset': 140}
                 tooltip(**tooltip_args)
             self.last_tooltip_msg = msg
 
