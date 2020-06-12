@@ -1,17 +1,22 @@
 # inspired by https://eshapard.github.io/
 #
 # KNOWN BUGS / TODO:
-# Undo messes up scheduling. Monkey patching from cordone below:
-#   https://gist.github.com/cordone/38317befecfbda6e12d4f04df4555065
 #   Maybe there's a way to request a better hook for this...
-#   Needs testing.
+#   Needs tests with fake learning data to measure impact on number of reviews
 # Long tooltips fall off the screen, so I've both monkey patched tooltip() here
 #   and also submitted a PR to anki to let tooltip() take x and y offsets
 #   remove that patch once that PR goes live in next version
 #   Note: "Set Font Size" and similar addons might cause offscreen tooltips.
-# Tweak initial starting assumptions (ease 2500 and 350 backoff, min/max)
-# Implement additional config options
+# Test and tweak starting_ease, leash, min/max
+#   Long: allow starting_ease to pull from mature cards in deck?
 # Move schedulers and tooltip to separate files for readability
+# Testing -- a 'what if' algorithm that would see how your # of reviews
+#   would have changed with this, instead of the normal 250%
+#   What assumptions to make about success rate based on changing intervals?
+# Can I use more info from the deck to "tune" initial intervals and curves?
+#   (hat tip to Alpakajunge)
+# per blahab - buttons don't play well with Advanced Review Bottombar button
+#   sizes. Using Anki 2.1.22 with Window 10
 
 from __future__ import annotations
 
@@ -32,6 +37,16 @@ config = mw.addonManager.getConfig(__name__)
 target_ratio = config.get('target_ratio', 0.85)
 moving_average_weight = config.get('moving_average_weight', 0.2)
 show_stats = config.get('show_stats', True)
+starting_ease = config.get('starting_ease', 2500)
+
+# Limit how aggressive the algorithm is, especially early on
+# These were left out of the config intentionally - adjust at your own risk!
+min_ease = 100
+# over 7k the time savings are minimal and the risk of miscalculation is higher
+max_ease = 7000
+# let ease change by leash * card views, so leash gets longer quickly
+# prevents wild swings from early reviews
+leash = 350
 
 
 class EaseAlgorithm(object):
@@ -42,6 +57,7 @@ class EaseAlgorithm(object):
 
     @staticmethod
     def calculate_moving_average(l):
+        assert len(l) > 0
         result = l[0]
         for i in l[1:]:
             result = (result * (1 - moving_average_weight))
@@ -51,24 +67,27 @@ class EaseAlgorithm(object):
     def find_success_rate(self, card_id):
         review_list = mw.col.db.list(("select ease from revlog where cid = ?"),
                                      card_id)
-        if not review_list:
-            return 0
+        if not review_list or len(review_list) < 1:
+            success_rate = target_ratio  # no reviews: assume we're on target
+        else:
+            success_list = [int(i > 1) for i in review_list]
+            success_rate = self.calculate_moving_average(success_list)
 
-        success_list = [int(i > 1) for i in review_list]
-        success_rate = self.calculate_moving_average(success_list)
         return success_rate
 
     def find_average_ease(self, card_id):
-        average_ease = 0
-        ease_list = mw.col.db.list("select (1000*ivl/lastIvl) from revlog"
-                                   " where cid = ? and lastIvl > 0 and "
-                                   "ivl > 0",
-                                   card_id)
-        if not ease_list or ease_list is None:
-            average_ease = 2500
+        # time of each review in milliseconds
+        review_times = mw.col.db.list("select id from revlog where cid = ? "
+                                      "order by id", card_id)
+        if not review_times or len(review_times) < 3:
+            avg_ease = starting_ease
         else:
-            average_ease = self.calculate_moving_average(ease_list)
-        return average_ease
+            real_intervals = [t1 - t0 for t0, t1 in zip(review_times[:-1],
+                                                        review_times[1:])]
+            ratios = [(i1 / i0) * 1000 for i0, i1 in zip(real_intervals[:-1],
+                                                         real_intervals[1:])]
+            avg_ease = self.calculate_moving_average(ratios)
+        return avg_ease
 
     def calculate_ease(self, card_id):
         success_rate = self.find_success_rate(card_id)
@@ -81,13 +100,13 @@ class EaseAlgorithm(object):
         average_ease = self.find_average_ease(card_id)
         suggested_factor = int(round(average_ease * delta_ratio))
 
-        # anchor this to 2500 starting out
+        # anchor this to starting_ease initially
         number_of_reviews = len(mw.col.db.list(("select ease from revlog where"
                                                 " cid = ?"), card_id))
-        ease_cap = min(7000, (2500 + 350 * number_of_reviews))
+        ease_cap = min(max_ease, (starting_ease + leash * number_of_reviews))
         if suggested_factor > ease_cap:
             suggested_factor = ease_cap
-        ease_floor = max(100, (2500 - 350 * number_of_reviews))
+        ease_floor = max(min_ease, (starting_ease - leash * number_of_reviews))
         if suggested_factor < ease_floor:
             suggested_factor = ease_floor
 
