@@ -2,6 +2,7 @@
     "target_ratio": 0.85,
     "moving_average_weight": 0.2,
     "show_stats": true,
+    "tooltip_duration": 5000,
     "starting_ease": 2500,
 
     "zzz_": "The following are unimplemented and outlined for future use",

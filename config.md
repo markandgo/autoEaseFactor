@@ -20,6 +20,11 @@ most people.
 information on past reviews and suggested ease.
 - default: True
 
+**tooltip_duration**
+
+- Length of time the tooltips persist (only relevant if show_stats is True)
+- default: 5000
+
 **starting_ease**
 
 - default: 2500 (250%)
