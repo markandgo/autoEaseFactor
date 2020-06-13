@@ -75,7 +75,7 @@ class EaseAlgorithm(object):
                               card_id)
 
     def find_success_rate(self, card_id):
-        review_list = get_reviews(card_id)
+        review_list = self.get_reviews(card_id)
         if not review_list or len(review_list) < 1:
             success_rate = target_ratio  # no reviews: assume we're on target
         else:
@@ -86,7 +86,7 @@ class EaseAlgorithm(object):
 
     def find_average_ease(self, card_id):
         average_ease = 0
-        ease_list = get_ease_list(card_id)
+        ease_list = self.get_ease_list(card_id)
         if not ease_list:
             average_ease = starting_ease
         else:
@@ -118,7 +118,7 @@ class EaseAlgorithm(object):
         suggested_factor = int(round(average_ease * delta_ratio))
 
         # anchor this to starting_ease initially
-        number_of_reviews = len(get_reviews(card_id))
+        number_of_reviews = len(self.get_reviews(card_id))
         ease_cap = min(max_ease, (starting_ease + leash * number_of_reviews))
         if suggested_factor > ease_cap:
             suggested_factor = ease_cap
@@ -135,7 +135,7 @@ class EaseAlgorithm(object):
 
         # tooltip messaging
         if show_stats:
-            review_list = get_reviews(card_id)
+            review_list = self.get_reviews(card_id)
             success_rate = self.find_success_rate(card_id)
 
             msg = ("cardID: {}<br/> sRate: {} curFactor: {} sugFactor: {}<br> "
