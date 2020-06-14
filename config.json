@@ -1,10 +1,10 @@
 {
-    "target_ratio": 0.85,
-    "moving_average_weight": 0.2,
-    "show_stats": true,
-    "tooltip_duration": 5000,
-    "starting_ease": 2500,
-    "min_ease": 1000,
-    "max_ease": 5000,
     "leash": 100,
+    "max_ease": 5000,
+    "min_ease": 1000,
+    "moving_average_weight": 0.2,
+    "starting_ease": 2500,
+    "stats_enabled": true,
+    "stats_duration": 5000,
+    "target_ratio": 0.85
 }

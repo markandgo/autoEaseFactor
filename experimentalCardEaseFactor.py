@@ -28,17 +28,17 @@ config = mw.addonManager.getConfig(__name__)
 
 target_ratio = config.get('target_ratio', 0.85)
 moving_average_weight = config.get('moving_average_weight', 0.2)
-show_stats = config.get('show_stats', True)
+stats_enabled = config.get('stats_enabled', True)
 starting_ease = config.get('starting_ease', 2500)
-tooltip_duration = config.get('tooltip_duration', 5000)
+stats_duration = config.get('stats_duration', 5000)
 
 # Limit how aggressive the algorithm is
 min_ease = config.get('min_ease', 1000)
 # over 7k the time savings are minimal and the risk of miscalculation is higher
-max_ease = config.get('min_ease', 5000)
+max_ease = config.get('max_ease', 5000)
 # let ease change by leash * card views, so leash gets longer quickly
 # prevents wild swings from early reviews
-leash = config.get('min_ease', 100)
+leash = config.get('leash', 100)
 
 
 class EaseAlgorithm(object):
@@ -50,8 +50,8 @@ class EaseAlgorithm(object):
     @staticmethod
     def calculate_moving_average(l):
         assert len(l) > 0
-        result = l[0]
-        for i in l[1:]:
+        result = target_ratio
+        for i in l:
             result = (result * (1 - moving_average_weight))
             result += i * moving_average_weight
         return result
@@ -125,7 +125,7 @@ class EaseAlgorithm(object):
         self.factor = calculated_ease
 
         # tooltip messaging
-        if show_stats:
+        if stats_enabled:
             review_list = self.get_reviews(card_id)
             success_rate = self.find_success_rate(card_id)
 
@@ -137,11 +137,11 @@ class EaseAlgorithm(object):
                 new_msg = (self.last_tooltip_msg
                            + "<br><br>  *   *   *   <br><br>"
                            + msg)
-                tooltip_args = {'msg': new_msg, 'period': tooltip_duration,
+                tooltip_args = {'msg': new_msg, 'period': stats_duration,
                                 'x_offset': 12, 'y_offset': 250}
                 tooltip(**tooltip_args)
             else:
-                tooltip_args = {'msg': msg, 'period': tooltip_duration,
+                tooltip_args = {'msg': msg, 'period': stats_duration,
                                 'x_offset': 12, 'y_offset': 140}
                 tooltip(**tooltip_args)
             self.last_tooltip_msg = msg

@@ -1,39 +1,15 @@
-There are three configurable options for this add on:
+The following options are configurable for this add on:
 
-**target_ratio**
 
-- Specifies your target success rate between 0 and 1. Note: Exponentially
-higher numbers of reviews are required the closer you get to 1, most people
-will find mid 80s or low 90s about right.
-- default: 0.85
+**leash**
 
-**moving_average_weight**
-
-- Specifies how much weight to place on more recent reviews over old reviews.
-Note: this is very senstive, values between 0.07 and 0.3 are about right for
-most people.
-- default: 0.2
-
-**show_stats**
-
-- Show debugging information about recent reviews in a tooltip. Includes
-information on past reviews and suggested ease.
-- default: True
-
-**tooltip_duration**
-
-- Length of time the tooltips persist (only relevant if show_stats is True)
-- default: 5000
-
-**starting_ease**
-
-- default: 2500 (250%)
-- Note per-mille, so 2500 = 250%.
-
-**min_ease**
-
-- The minimum ease you want any of your cards to retreat to.
-- default: 1000 (100%)
+- Controls how much the algorithm can change ease after any single review
+- default 100
+- Note: This window expands after every review, so after we have some data on
+the card the algorithm will get more aggressive. Also, this is per mille. So
+if you set this to 100, and your starting ease is 250%, and you answer
+perfectly, your ease will be 250, 260, 280, 310.... If you've had over 10
+reviews this can still change your ease by over 1000 points.
 
 **max_ease**
 
@@ -42,9 +18,37 @@ information on past reviews and suggested ease.
 - Note that once you get over 5-7k the time savings are minimal and the risks
 of miscalculation are higher.
 
-**leash**
+**min_ease**
 
-- Controls how much the algorithm can change ease after any single review
-- default 100
-- Note: This window expands after every review, so after we have some data on
-the card the algorithm will get more aggressive.
+- The minimum ease you want any of your cards to retreat to.
+- default: 1000 (100%)
+
+**moving_average_weight**
+
+- Specifies how much weight to place on more recent reviews over old reviews.
+Note: this is very senstive, values between 0.07 and 0.3 are about right for
+most people.
+- default: 0.2
+
+**stats_duration**
+
+- Length of time the tooltips persist (only relevant if show_stats is True)
+- default: 5000
+
+**stats_enabled**
+
+- Show debugging information about recent reviews in a tooltip. Includes
+information on past reviews and suggested ease.
+- default: True
+
+**starting_ease**
+
+- default: 2500 (250%)
+- Note per-mille, so 2500 = 250%.
+
+**target_ratio**
+
+- Specifies your target success rate between 0 and 1. Note: Exponentially
+higher numbers of reviews are required the closer you get to 1, most people
+will find mid 80s or low 90s about right.
+- default: 0.85
