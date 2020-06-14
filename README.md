@@ -9,6 +9,13 @@ Important: **You must not use an interval modifier in your deck options**.
 Your interval modifier must be set to 100% (no change) for all decks. Otherwise
 this algorithm could be constantly chasing a moving target.
 
+WARNING: This makes your ease factors move much more than you are probably used
+to. Missing a few reviews can make them drop a lot. But if you get the next
+review or two, it will climb back really fast. You can limit these swings in
+the config, though arguably it's ok not to constrain these moves too much,
+because they self-correct over time. Strongly advise you ignore your ease after
+installing this add on and just let it do its thing.
+
 ### Differences from eshapard's version
 
 Unlike eshapard's version, which requires four reviews before the algorithm

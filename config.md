@@ -29,3 +29,22 @@ information on past reviews and suggested ease.
 
 - default: 2500 (250%)
 - Note per-mille, so 2500 = 250%.
+
+**min_ease**
+
+- The minimum ease you want any of your cards to retreat to.
+- default: 1000 (100%)
+
+**max_ease**
+
+- The maximum ease you want any of your cards to reach.
+- default: 5000 (500%)
+- Note that once you get over 5-7k the time savings are minimal and the risks
+of miscalculation are higher.
+
+**leash**
+
+- Controls how much the algorithm can change ease after any single review
+- default 100
+- Note: This window expands after every review, so after we have some data on
+the card the algorithm will get more aggressive.

@@ -1,22 +1,14 @@
 # inspired by https://eshapard.github.io/
 #
-# KNOWN BUGS / TODO:
-#   Maybe there's a way to request a better hook for this...
-#   Needs tests with fake learning data to measure impact on number of reviews
+# ROADMAP:
+# Tests with fake learning data to measure impact on number of reviews
 # Long tooltips fall off the screen, so I've both monkey patched tooltip() here
 #   and also submitted a PR to anki to let tooltip() take x and y offsets
 #   remove that patch once that PR goes live in next version
 #   Note: "Set Font Size" and similar addons might cause offscreen tooltips.
-# Test and tweak starting_ease, leash, min/max
-#   Long: allow starting_ease to pull from mature cards in deck?
-# Move schedulers and tooltip to separate files for readability
-# Testing -- a 'what if' algorithm that would see how your # of reviews
-#   would have changed with this, instead of the normal 250%
-#   What assumptions to make about success rate based on changing intervals?
-# Can I use more info from the deck to "tune" initial intervals and curves?
-#   (hat tip to Alpakajunge)
-# per blahab - buttons don't play well with Advanced Review Bottombar button
-#   sizes. Using Anki 2.1.22 with Window 10
+# Buttons don't play well with Advanced Review Bottombar button
+#   sizes. Using Anki 2.1.22 with Window 10. Note they do mysteriously work
+#   with the KING of button add ons. (hat tip to Blahab)
 
 from __future__ import annotations
 
@@ -40,14 +32,13 @@ show_stats = config.get('show_stats', True)
 starting_ease = config.get('starting_ease', 2500)
 tooltip_duration = config.get('tooltip_duration', 5000)
 
-# Limit how aggressive the algorithm is, especially early on
-# These were left out of the config intentionally - adjust at your own risk!
-min_ease = 100
+# Limit how aggressive the algorithm is
+min_ease = config.get('min_ease', 1000)
 # over 7k the time savings are minimal and the risk of miscalculation is higher
-max_ease = 7000
+max_ease = config.get('min_ease', 5000)
 # let ease change by leash * card views, so leash gets longer quickly
 # prevents wild swings from early reviews
-leash = 350
+leash = config.get('min_ease', 100)
 
 
 class EaseAlgorithm(object):
@@ -119,10 +110,10 @@ class EaseAlgorithm(object):
 
         # anchor this to starting_ease initially
         number_of_reviews = len(self.get_reviews(card_id))
-        ease_cap = min(max_ease, (starting_ease + leash * number_of_reviews))
+        ease_cap = min(max_ease, (starting_ease + (leash * number_of_reviews)))
         if suggested_factor > ease_cap:
             suggested_factor = ease_cap
-        ease_floor = max(min_ease, (starting_ease - leash * number_of_reviews))
+        ease_floor = max(min_ease, (starting_ease - (leash * number_of_reviews)))
         if suggested_factor < ease_floor:
             suggested_factor = ease_floor
 
