@@ -48,7 +48,7 @@ class EaseAlgorithm(object):
         self.last_tooltip_msg = None
 
     @staticmethod
-    def calculate_moving_average(l, init = None):
+    def calculate_moving_average(l, init=None):
         assert len(l) > 0
         if init is None:
             result = sum(l)/len(l)
@@ -107,16 +107,17 @@ class EaseAlgorithm(object):
             success_rate = 0.99  # ln(1) = 0; avoid divide by zero error
         if success_rate < 0.01:
             success_rate = 0.01
-        delta_ratio = math.log(target_ratio) / math.log(success_rate)  # .978 ?
-        average_ease = self.find_average_ease(card_id)  # 226.7 ?
-        suggested_factor = int(round(average_ease * delta_ratio)) # 1102? sb 221.87
+        delta_ratio = math.log(target_ratio) / math.log(success_rate)
+        average_ease = self.find_average_ease(card_id)
+        suggested_factor = int(round(average_ease * delta_ratio))
 
         # anchor this to starting_ease initially
         number_of_reviews = len(self.get_reviews(card_id))
         ease_cap = min(max_ease, (starting_ease + (leash * number_of_reviews)))
         if suggested_factor > ease_cap:
             suggested_factor = ease_cap
-        ease_floor = max(min_ease, (starting_ease - (leash * number_of_reviews)))
+        ease_floor = max(min_ease, (starting_ease -
+                                    (leash * number_of_reviews)))
         if suggested_factor < ease_floor:
             suggested_factor = ease_floor
 
@@ -131,18 +132,22 @@ class EaseAlgorithm(object):
         if stats_enabled:
             review_list = self.get_reviews(card_id)
             success_rate = self.find_success_rate(card_id)
-            delta_ratio = math.log(target_ratio) / math.log(success_rate)  # .978 ?
-            average_ease = self.find_average_ease(card_id)  # 226.7 ?
-
+            '''
+            if success_rate > 0.99:
+                success_rate = 0.99  # ln(1) = 0; avoid divide by zero error
+            if success_rate < 0.01:
+                success_rate = 0.01
+            delta_ratio = math.log(target_ratio) / math.log(success_rate)
+            average_ease = self.find_average_ease(card_id)'''
 
             msg = ("card ID: {}<br/> success rate: {} current ease factor: {} "
-                   "<br>suggested ease factor: {}<br> "
-                   "review list: {}<br>".format(card_id, round(success_rate, 4),
-                                          round(mw.reviewer.card.factor),
-                                          calculated_ease, review_list))
-            extended_msg = ("delta_ratio: {} average_ease: {}<br>"
-                            "".format(delta_ratio, average_ease))
-            msg += extended_msg
+                   "<br>suggested ease factor: {}<br> review list: {}"
+                   "<br>".format(card_id, round(success_rate, 4),
+                                 round(mw.reviewer.card.factor),
+                                 calculated_ease, review_list))
+            # extended_msg = ("delta_ratio: {} average_ease: {}<br>"
+            #                 "".format(delta_ratio, average_ease))
+            # msg += extended_msg
             if self.last_tooltip_msg is not None:
                 new_msg = (self.last_tooltip_msg
                            + "<br><br>  *   *   *   <br><br>"

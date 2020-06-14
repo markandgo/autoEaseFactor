@@ -7,6 +7,9 @@ import pytest
 ## https://github.com/krassowski/anki_testing/blob/master/README.md
 ## https://github.com/krassowski/Anki-Night-Mode/blob/master/tests/
 ## https://github.com/AwesomeTTS/awesometts-anki-addon/blob/master/tests
+## DB Structure https://github.com/ankidroid/Anki-Android/wiki/Database-Structure
+
+# test for divide by zero in the delta ratio methods
 
 test_reviews = [[0, 0, 0, 0, 0, 3, 3, 3, 3, 3],
                 [3, 3, 3, 3, 3, 0, 0, 0, 0, 0],
@@ -14,8 +17,10 @@ test_reviews = [[0, 0, 0, 0, 0, 3, 3, 3, 3, 3],
                 [3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
+
 ## generate fake revlog. sigh.
 ##  edit the below snippet for sensible reviews with various timings.
+#  id cid usn ease ivl lastIvl factor time type
 revlog =   [[1590761106130, 1589630888414, 109, 2, -129600, -900, 0, 12657, 0],
             [1590761109388, 1589630888418, 109, 2, -129600, -900, 0, 3221, 0],
             [1590761131077, 1589220257070, 109, 1, -900, -900, 0, 21684, 0],
@@ -39,46 +44,40 @@ revlog =   [[1590761106130, 1589630888414, 109, 2, -129600, -900, 0, 12657, 0],
             [1590762308072, 1590368217697, 109, 1, -900, -900, 0, 40175, 0],
             [1590762326490, 1590368217712, 109, 2, -129600, -900, 0, 18411, 0]]
 
-'''get this to work:
-mw.col.db.list("select (1000*ivl/lastIvl) from revlog where cid = ? "
-               "and lastIvl > 0 and ivl > 0", card_id)
-(does anki_tests have a way to load a fake revlog or do i overwrite the db.list
-method?)
-               '''
-
-
-'''
--- revlog schema
-    id              integer primary key,
-       -- epoch-seconds timestamp of when you did the review
-    cid             integer not null,
-       -- cards.id
-    usn             integer not null,
-       -- all my reviews have -1
-    ease            integer not null,
-       -- which button you pushed to score your recall. 1(wrong), 2(hard), 3(ok), 4(easy)
-    ivl             integer not null,
-       -- interval (negative for seconds if under 1 day)
-    lastIvl         integer not null, (0 until out of learning)
-       -- last interval
-    factor          integer not null,
-      -- factor
-    time            integer not null,
-       -- how many milliseconds your review took, up to 60000 (60s)
-    type            integer not null
-);
-'''
+mv_avg_test_lists = {(1, 1, 1, 0, 0, 0):0.3809,
+                     (0, 0, 0, 1, 1, 1):0.6191,
+                     (1, 0, 1, 0, 1, 0):0.4590,
+                     (0, 1, 0, 1, 0, 1):0.5410,
+                     (1, 1, 1, 0, 0, 0):0.3405,
+                     (0, 0, 0, 1, 1, 1):0.6953,
+                     (1, 0, 1, 0, 1, 0):0.3672,
+                     (0, 1, 0, 1, 0, 1):0.6328,
+                     (2500, 3100, 3500, 3700, 1444, 638, 1800):2166.9092,
+                     (2500, 3100, 3500, 3700, 3900, 4500, 4700):3900.0273}
 
 def test_ECEF():
     with anki_running() as anki_app:
         import experimentalCardEaseFactor
         import YesOrNo
 
-        for reviews in test_reviews:
-            find_success_rate()
-            assert True
+        from experimentalCardEaseFactor import alg
+
+        def get_reviews(self, card_id):
+            return [rev[3] for rev in revlog if rev[1] == card_id]
+        alg.get_reviews = get_reviews
+
+        def get_ease_list(self, card_id):
+            outval = []
+            for rev in revlog:
+                if rev[4] > 0 and rev[5] > 0 and rev[1] == card_id:
+                    outval.append(1000*rev[4]/rev[5])
+            return outval
+        alg.get_ease_list = get_ease_list
 
         def test_calculate_moving_average():
+            for l in mv_avg_test_lists.keys():
+                assert (round(alg.calculate_moving_average(l), 2) ==
+                        round(mv_avg_test_lists[l], 2))
             assert True
 
         def test_find_success_rate():
