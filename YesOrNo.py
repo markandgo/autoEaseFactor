@@ -3,10 +3,6 @@
 # License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
 # No support. Use it AS IS on your own risk.
 
-from __future__ import division
-from __future__ import unicode_literals
-# import os
-
 from aqt import mw
 from aqt.reviewer import Reviewer
 from aqt.utils import showInfo
