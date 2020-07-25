@@ -58,12 +58,9 @@ def AKR_answerCard(self, ease):
             showInfo("Review Type: Review")
     if debugMsg:
         showInfo("Selected: %s" % ease)
-    try:
-        ease = remap[count][ease]
-        if debugMsg:
-            showInfo("Remapped to: %s" % ease)
-    except (KeyError, IndexError):
-        pass
+    ease = remap[count][ease]
+    if debugMsg:
+        showInfo("Remapped to: %s" % ease)
     __oldFunc(self, ease)
 
 
