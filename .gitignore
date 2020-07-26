@@ -2,3 +2,5 @@ anki_root
 anki_testing
 *.zip
 roadmap.*
+*.ankiaddon
+share_addon.txt

@@ -61,6 +61,7 @@ def AKR_answerCard(self, ease):
     ease = remap[count][ease]
     if debugMsg:
         showInfo("Remapped to: %s" % ease)
+    assert ease, f"Bad ease value: {ease}"
     __oldFunc(self, ease)
 
 
