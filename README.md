@@ -69,12 +69,11 @@ I suggest that you use the YesOrNo addon and that you disable
 Seeing the next review times will just distract you from studying.
 
 ## Acknowledgments
-eshapard
-ja-dark
-cordone
-brownbat (me)
-(hat tip to the MIA crew for inspiration and to the AnKing for helping me
-figure out how all this works)
+- eshapard
+- ja-dark
+- cordone
+- Also, hat tip to the MIA crew for inspiration and to the AnKing for helping me
+figure out how all this works
 
 I am not requesting support, but the original author, eshapard, can receive
 tips at this link:
