@@ -1,14 +1,4 @@
 # inspired by https://eshapard.github.io/
-#
-# ROADMAP:
-# Tests with fake learning data to measure impact on number of reviews
-# Long tooltips fall off the screen, so I've both monkey patched tooltip() here
-#   and also submitted a PR to anki to let tooltip() take x and y offsets
-#   remove that patch once that PR goes live in next version
-#   Note: "Set Font Size" and similar addons might cause offscreen tooltips.
-# Buttons don't play well with Advanced Review Bottombar button
-#   sizes. Using Anki 2.1.22 with Window 10. Note they do mysteriously work
-#   with the KING of button add ons. (hat tip to Blahab)
 
 from __future__ import annotations
 
@@ -16,6 +6,8 @@ import math
 import random
 import time
 from heapq import heappush
+
+from anki.decks import DeckManager
 
 from anki import version
 from anki.hooks import addHook
@@ -29,7 +21,6 @@ config = mw.addonManager.getConfig(__name__)
 target_ratio = config.get('target_ratio', 0.85)
 moving_average_weight = config.get('moving_average_weight', 0.2)
 stats_enabled = config.get('stats_enabled', True)
-starting_ease = config.get('starting_ease', 2500)
 stats_duration = config.get('stats_duration', 5000)
 
 # Limit how aggressive the algorithm is
@@ -44,7 +35,7 @@ leash = config.get('leash', 100)
 class EaseAlgorithm(object):
 
     def __init__(self):
-        self.factor = starting_ease
+        self.factor = 2500
         self.last_tooltip_msg = None
 
     @staticmethod
@@ -82,26 +73,23 @@ class EaseAlgorithm(object):
         average_ease = 0
         ease_list = self.get_ease_list(card_id)
         if not ease_list:
-            average_ease = starting_ease
+            deck_id = mw.reviewer.card.did
+            deck_starting_ease = mw.col.decks.confForDid(
+                    deck_id)['new']['initialFactor']
+            average_ease = deck_starting_ease
+
         else:
             average_ease = self.calculate_moving_average(ease_list)
-            # Replacement on true intervals failed testing. Revisit, implement.
-            '''
-            # time of each review in milliseconds
-            review_times = mw.col.db.list("select id from revlog where cid = ? "
-                                          "order by id", card_id)
-            if not review_times or len(review_times) < 3:
-                average_ease = starting_ease
-                real_intervals = [t1 - t0 for t0, t1 in zip(review_times[:-1],
-                                                            review_times[1:])]
-                ratios = [(i1 / i0) * 1000 for i0, i1 in
-                          zip(real_intervals[:-1], average_ease =
-                          self.calculate_moving_average(ratios)
-            '''
         return average_ease
 
     def calculate_ease(self, card_id):
+        deck_id = mw.reviewer.card.did
+        deck_starting_ease = mw.col.decks.confForDid(
+                deck_id)['new']['initialFactor']
+        starting_ease = deck_starting_ease
+
         success_rate = self.find_success_rate(card_id)
+
         # Ebbinghaus formula
         if success_rate > 0.99:
             success_rate = 0.99  # ln(1) = 0; avoid divide by zero error
@@ -148,6 +136,8 @@ class EaseAlgorithm(object):
             # extended_msg = ("delta_ratio: {} average_ease: {}<br>"
             #                 "".format(delta_ratio, average_ease))
             # msg += extended_msg
+            # debug_msg = ""
+            # msg = debug_msg + msg
             if self.last_tooltip_msg is not None:
                 new_msg = (self.last_tooltip_msg
                            + "<br><br>  *   *   *   <br><br>"

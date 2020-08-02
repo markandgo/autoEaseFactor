@@ -41,11 +41,6 @@ most people.
 information on past reviews and suggested ease.
 - default: True
 
-**starting_ease**
-
-- default: 2500 (250%)
-- Note per-mille, so 2500 = 250%.
-
 **target_ratio**
 
 - Specifies your target success rate between 0 and 1. Note: Exponentially

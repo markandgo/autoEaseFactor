@@ -3,7 +3,6 @@
     "max_ease": 5000,
     "min_ease": 1000,
     "moving_average_weight": 0.2,
-    "starting_ease": 2500,
     "stats_enabled": true,
     "stats_duration": 5000,
     "target_ratio": 0.85
