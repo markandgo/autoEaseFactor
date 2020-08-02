@@ -39,9 +39,12 @@ beginning, but backing off rapidly after a card is well known.
 
 ### Installation
 In Anki, 
-Tools > Add-ons > Get Add-ons...
+
+    Tools > Add-ons > Get Add-ons...
+
 Then use this code: 
-  1672712021
+
+    1672712021
 
 Manual installation
 
