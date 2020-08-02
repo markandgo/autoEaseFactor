@@ -20,30 +20,35 @@ installing this add on and just let it do its thing.
 
 Unlike eshapard's version, which requires four reviews before the algorithm
 kicks in, this version lets the algorithm adjust ease factors as early as
-possible. To avoid wild swings early in a card's life, I limit how much the
-algorithm can change the ease factor at first.
+possible, including using information from learning steps. To avoid wild swings
+early in a card's life, I limit how much the algorithm can change the ease
+factor at first.
 
-I also incorporate a moving average, so your most recent success rate will have
-more influence than early reviews. This helps adjust the ease more quickly when
-it took you a long time to learn a card originally but now you've really got it
-down.
+Since learning steps provide very low quality data on the ultimate retention of
+a card, I also incorporate a moving average, so your most recent success rate
+will have much more influence than early reps. This helps adjust the ease more
+quickly when it took you a long time to learn a card originally but now you've
+really got it down. I also include a 'leash' setting, to tie your ease down at
+first, in case you want to limit the swings in the algorithm until you've had
+many more reviews.
 
-If you're used to ease factors very close to 250%, this algorithm will produce
-some alarmingly low (or high) ease factors. It will generally auto-adjust very
-quickly based on your performance. That said, this add on has not been tested
-across a population of users to see how it affects review load. Definitely
-provide feedback if you feel this is causing significantly more reviews than
-expected or fewer reviews than necessary. My anecdotal experience is that it
-front loads the work a bit, causing more reviews with short intervals in the
-beginning, but backing off rapidly after a card is well known.
+If you're used to ease factors very close to 250%, without a low leash, this
+algorithm can produce some alarmingly low (or high) ease factors. It will
+generally auto-adjust very quickly based on your performance. That said, this
+add on has not been tested across a population of users to see how it affects
+review load. Definitely provide feedback if you feel this is causing
+significantly more reviews than expected or fewer reviews than necessary. My
+anecdotal experience is that it front loads the work a bit, causing more
+reviews with short intervals in the beginning, but backing off rapidly after a
+card is well known.
 
 ### Installation
 
-#### In Anki, 
+#### In Anki,
 
     Tools > Add-ons > Get Add-ons...
 
-Then use this code: 
+Then use this code:
 
     1672712021
 
@@ -90,5 +95,5 @@ I am not requesting support, but the original author, eshapard, can receive
 tips at this link:
 https://paypal.me/eshapard/1
 
-On AnkiWeb here: 
+On AnkiWeb here:
 https://ankiweb.net/shared/info/1672712021
