@@ -38,7 +38,8 @@ front loads the work a bit, causing more reviews with short intervals in the
 beginning, but backing off rapidly after a card is well known.
 
 ### Installation
-In Anki, 
+
+#### In Anki, 
 
     Tools > Add-ons > Get Add-ons...
 
@@ -46,7 +47,7 @@ Then use this code:
 
     1672712021
 
-Manual installation
+#### Manual installation
 
 Create a new folder named *experimentalCardEaseFactor* in your Anki 2.1 addons
 directory. Save `__init__.py`, `experimentalCardEaseFactor.py` and `YesOrNo.py`
