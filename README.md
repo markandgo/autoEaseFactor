@@ -60,17 +60,19 @@ to this folder. If you don't want to use `YesOrNo.py`, don't include it, and
 remove it from `__init__.py`.
 
 ### Configuration
-There are a couple options that can be configured by editing the addon:
+There are a few options that can be configured by editing the addon:
 
 1. 'target_ratio' is the success rate you want to aim for (e.g. 0.85 for an 85%
 success rate)
-2. show_stats indicates whether or not to show the pop-up with some card stats
-for the current and last card, including the history of reviews and how that is
-affecting its ease
+2. 'leash' controls how much the ease can change per review, so a small leash
+of 10 or 50 will not let the algorithm adjust things until it has much more
+data.
 3. moving_average_weight indicates how much to focus on more recent results
 when determining success rate. Higher numbers will focus more on recent
 performance. (This is very sensitive, values between 0.07 and 0.3 are
 reasonable).
+4. min_ and max_ ease set the bounds of how far the algorithm can set the
+ease. This is "per mille," so 5000 = 500%.
 
 ## YesOrNo.py
 Hard and easy add more choices that delay reviews and make you responsible for
