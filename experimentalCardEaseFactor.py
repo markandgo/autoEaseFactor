@@ -74,8 +74,11 @@ class EaseAlgorithm(object):
         ease_list = self.get_ease_list(card_id)
         if not ease_list:
             deck_id = mw.reviewer.card.did
-            deck_starting_ease = mw.col.decks.confForDid(
-                    deck_id)['new']['initialFactor']
+            try:
+                deck_starting_ease = mw.col.decks.confForDid(
+                        deck_id)['new']['initialFactor']
+            except KeyError:
+                deck_starting_ease = 2500
             average_ease = deck_starting_ease
 
         else:
@@ -84,8 +87,11 @@ class EaseAlgorithm(object):
 
     def calculate_ease(self, card_id):
         deck_id = mw.reviewer.card.did
-        deck_starting_ease = mw.col.decks.confForDid(
-                deck_id)['new']['initialFactor']
+        try:
+            deck_starting_ease = mw.col.decks.confForDid(
+                    deck_id)['new']['initialFactor']
+        except KeyError:
+            deck_starting_ease = 2500
         starting_ease = deck_starting_ease
 
         success_rate = self.find_success_rate(card_id)
