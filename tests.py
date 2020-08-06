@@ -20,17 +20,6 @@ target_ratio = 0.85
 moving_average_weight = 0.2
 
 
-# Limit how aggressive the algorithm is
-min_ease = 1000
-# over 7k the time savings are minimal and the risk of miscalculation is higher
-max_ease = 5000
-# let ease change by leash * card views, so leash gets longer quickly
-# prevents wild swings from early reviews
-leash = 100
-
-starting_ease = 2500
-
-
 def calculate_moving_average(l, init=None):
     assert len(l) > 0
     if init is None:
@@ -52,7 +41,8 @@ def find_success_rate(reviews=None):
     return success_rate
 
 
-def calculate_ease(reviews=None, ease_list=None):
+def calculate_ease(reviews=None, ease_list=None, initial_factor=2500,
+                   leash=100, min_ease=100, max_ease=5000):
     success_rate = find_success_rate(reviews)
 
     # Ebbinghaus formula
@@ -64,12 +54,12 @@ def calculate_ease(reviews=None, ease_list=None):
     average_ease = calculate_moving_average(ease_list)
     suggested_factor = int(round(average_ease * delta_ratio))
 
-    # anchor this to starting_ease initially
+    # anchor this to initial_factor initially
     number_of_reviews = len(reviews)
-    ease_cap = min(max_ease, (starting_ease + (leash * number_of_reviews)))
+    ease_cap = min(max_ease, (initial_factor + (leash * number_of_reviews)))
     if suggested_factor > ease_cap:
         suggested_factor = ease_cap
-    ease_floor = max(min_ease, (starting_ease -
+    ease_floor = max(min_ease, (initial_factor -
                                 (leash * number_of_reviews)))
     if suggested_factor < ease_floor:
         suggested_factor = ease_floor
@@ -77,10 +67,10 @@ def calculate_ease(reviews=None, ease_list=None):
     return suggested_factor
 
 
-def ease_ivls(answer_list, use_lapse_ivl = True):
+def ease_ivls(answer_list, initial_factor=2500, use_lapse_ivl=True):
     this_ivl = 1
-    factor = starting_ease
-    ease_list = [factor]
+    ease_list = [initial_factor]
+    factor = initial_factor
     ivl_list = [1]
     for i in answer_list:
         if i == 1:
@@ -103,27 +93,29 @@ def ease_ivls(answer_list, use_lapse_ivl = True):
     return (ease_list, ivl_list)
 
 
-def ease(answer_list):
-    return ease_ivls(answer_list)[0]
+def ease(answer_list, initial_factor=2500, use_lapse_ivl=True):
+    return ease_ivls(answer_list, initial_factor=2500, use_lapse_ivl=True)[0]
 
 
-def ivls(answer_list):
-    return ease_ivls(answer_list)[1]
+def ivls(answer_list, initial_factor=2500, use_lapse_ivl=True):
+    return ease_ivls(answer_list, initial_factor=2500, use_lapse_ivl=True)[1]
 
 
 def reviews_to_pass_fail(reviews):
     return [int(_ > 1) for _ in reviews]
 
 
-def new_ease_ivls(reviews):
+def new_ease_ivls(reviews, initial_factor=2500, leash=100, min_ease=100,
+                  max_ease=5000):
     pf_revs = reviews_to_pass_fail(reviews)
     this_ivl = 1
 
-    factor = starting_ease
-    ease_list = [factor]
+    ease_list = [initial_factor]
     ivl_list = [1]
     for idx in range(len(pf_revs)):
-        ease_list.append(calculate_ease(pf_revs[:idx+1], ease_list))
+        ease_list.append(calculate_ease(pf_revs[:idx+1], ease_list,
+                                        initial_factor, leash, min_ease,
+                                        max_ease))
         if pf_revs[idx]:
             ivl_list.append(round(ivl_list[-1] * ease_list[-1] / 1000,2))
         else:
@@ -135,12 +127,14 @@ def new_ease_ivls(reviews):
     return (ease_list, ivl_list)
 
 
-def new_ease(reviews):
-    return new_ease_ivls(reviews)[0]
+def new_ease(reviews, initial_factor=2500, leash=100, min_ease=100,
+             max_ease=5000):
+    return new_ease_ivls(reviews, initial_factor, leash, min_ease)[0]
 
 
-def new_ivls(reviews):
-    return new_ease_ivls(reviews)[1]
+def new_ivls(reviews, initial_factor=2500, leash=100, min_ease=100,
+             max_ease=5000):
+    return new_ease_ivls(reviews, initial_factor, leash, min_ease)[1]
 
 def gen_revs_for_ideal_ease(ideal = 2900, num_reviews = 25, use_new = False):
     rev_list = [3]
@@ -211,34 +205,60 @@ print(f"Revs during first year (new): {year_one_revs_new}")
 
 print()
 print("Interactive mode")
+# Warning: This is not really an apples to apples comparison, as your review
+# times would vary in old mode and new mode, so your retention and button
+# presses would not likely be identical.
+
+def get_interactive_flags():
+    print(f"Set initial ease factor (per mille, e.g., 2500): ", end='')
+    i_init_factor = int(input())
+    print(f"Set minimum ease: ", end='')
+    i_min_ease = int(input())
+    print(f"Set maximum ease: ", end='')
+    i_max_ease = int(input())
+    print(f"Set leash: ", end='')
+    i_leash = int(input())
+    i_flags = {'initial_factor':i_init_factor, 'minimum_ease':i_min_ease,
+               'maximum_ease':i_max_ease, 'leash':i_leash}
+    return i_flags
+
+def is_valid_reviews(revs):
+    valid = True
+    for i in revs:
+        if i not in '1234, ':
+            valid = False
+    return valid
+
+flags = get_interactive_flags()
+
 while True:
-    print("Type in a list of reviews to see recommended ease under each algorithm")
+    print()
+    print("Type in a list of reviews to see recommended ease under each "
+          "algorithm")
     print("e.g.: '3, 2, 3, 1, 1'")
-    print('(ctrl+c to quit)')
-    reviews = [int(_.strip()) for _ in input().split(',')]
-    print(f"New ease: {new_ease(reviews)[-1]}\n"
-          f"{new_ease(reviews)}\n"
-          f"Old ease: {ease(reviews)[-1]}\n"
-          f"{ease(reviews)}\n"
-          )
+    print('or (C)onfig or (Q)uit')
+    revs_or_option = input()
+    if revs_or_option.lower() == 'q':
+        exit()
+    elif revs_or_option.lower() == 'c':
+        flags = get_interactive_flags()
+    elif is_valid_reviews(revs_or_option):
+        reviews = [int(_.strip()) for _ in revs_or_option.split(',')]
+        new_ease_results = new_ease(reviews=reviews,
+                                    initial_factor=flags['initial_factor'],
+                                    leash=flags['leash'],
+                                    min_ease=flags['minimum_ease'],
+                                    max_ease=flags['maximum_ease']
+                                    )
+        old_ease_results = ease(answer_list=reviews,
+                                initial_factor=flags['initial_factor'])
+        print(f"New ease: {new_ease_results[-1]}\n"
+              f"{new_ease_results}\n"
 
-# Tried this at first, just a random list of button presses.
-# But if you generate totally random review data,
-# it's not an apples to apples comparison
-# because different buttons would change the ivls in different ways
-# for the different algorithms, which would affect your next button press
-
-# The revised gen_revs_for_ideal_ease() function presses buttons the way
-# someone might if they were facing a card that really needed a certain
-# ease factor, fail if the ivl is longer than 2900 * the last ivl, say, but
-# passed if it was under that.
-'''def generate_random_review_data(num_reviews=10):
-    answer_button_list = []
-    for i in range(num_reviews):
-        answer_button_list.append(random.randint(1, 4))
-    return answer_button_list
-'''
-# That's closer, but probably need to model some probabilistic modifiers,
-#   sometimes you have bad days.
-# Also, some cards are just really stubborn, and take a ton of reviews before
-#   they stick, while others click right away. Not yet sure how to model that.
+              f"Old ease: {old_ease_results[-1]}\n"
+              f"{old_ease_results}\n"
+              )
+    else:
+        print("Bad input.")
+        print("List of reviews must only contain numbers 1-4 separated by "
+              "commas.\n")
