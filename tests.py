@@ -209,7 +209,18 @@ for idx in range(len(ivls(old_reviews))):
 print(f"Revs during first year (old): {year_one_revs_old}")
 print(f"Revs during first year (new): {year_one_revs_new}")
 
-
+print()
+print("Interactive mode")
+while True:
+    print("Type in a list of reviews to see recommended ease under each algorithm")
+    print("e.g.: '3, 2, 3, 1, 1'")
+    print('(ctrl+c to quit)')
+    reviews = [int(_.strip()) for _ in input().split(',')]
+    print(f"New ease: {new_ease(reviews)[-1]}\n"
+          f"{new_ease(reviews)}\n"
+          f"Old ease: {ease(reviews)[-1]}\n"
+          f"{ease(reviews)}\n"
+          )
 
 # Tried this at first, just a random list of button presses.
 # But if you generate totally random review data,

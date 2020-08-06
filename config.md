@@ -47,3 +47,11 @@ information on past reviews and suggested ease.
 higher numbers of reviews are required the closer you get to 1, most people
 will find mid 80s or low 90s about right.
 - default: 0.85
+
+**two_button_mode**
+
+- Enables pass/fail buttons to help speed reviews. If you prefer the
+four-button mode, you can set this to false, though caveat emptor, the main
+benefit of this algorithm is reducing the thinking time on each individual
+card.
+- default: true
