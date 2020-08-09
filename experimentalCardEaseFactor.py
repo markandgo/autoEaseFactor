@@ -18,6 +18,7 @@ anki21 = version.startswith("2.1.")
 
 config = mw.addonManager.getConfig(__name__)
 
+
 target_ratio = config.get('target_ratio', 0.85)
 moving_average_weight = config.get('moving_average_weight', 0.2)
 stats_enabled = config.get('stats_enabled', True)
@@ -134,11 +135,25 @@ class EaseAlgorithm(object):
             delta_ratio = math.log(target_ratio) / math.log(success_rate)
             average_ease = self.find_average_ease(card_id)'''
 
-            msg = ("card ID: {}<br/> success rate: {} current ease factor: {} "
-                   "<br>suggested ease factor: {}<br> review list: {}"
-                   "<br>".format(card_id, round(success_rate, 4),
-                                 round(mw.reviewer.card.factor),
-                                 calculated_ease, review_list))
+            avg_ease = self.find_average_ease(card_id)
+            ease_list = self.get_ease_list(card_id)
+
+            printable_review_list = ""
+            row_limit = max(20, len(review_list)//3)
+            for idx, i in enumerate(review_list[:-1]):
+                if idx % row_limit == 0:
+                    printable_review_list += '<br>'
+                printable_review_list += str(i) + ', '
+            printable_review_list += str(review_list[-1])
+
+            msg = f"card ID: {card_id}<br>"
+                   # f"average ease: {round(avg_ease, 4)}<br>"
+                   # f"ease_list: {ease_list}<br>"
+            msg += f"success rate (weighted): {round(success_rate, 4)}<br>"
+            msg += f"current ease factor: {round(mw.reviewer.card.factor)}<br>"
+            msg += f"suggested ease factor: {calculated_ease}<br>"
+            msg += f"review list: {printable_review_list}<br>"
+
             # extended_msg = ("delta_ratio: {} average_ease: {}<br>"
             #                 "".format(delta_ratio, average_ease))
             # msg += extended_msg
@@ -149,11 +164,11 @@ class EaseAlgorithm(object):
                            + "<br><br>  *   *   *   <br><br>"
                            + msg)
                 tooltip_args = {'msg': new_msg, 'period': stats_duration,
-                                'x_offset': 12, 'y_offset': 250}
+                                'x_offset': 12, 'y_offset': 350}
                 tooltip(**tooltip_args)
             else:
                 tooltip_args = {'msg': msg, 'period': stats_duration,
-                                'x_offset': 12, 'y_offset': 140}
+                                'x_offset': 12, 'y_offset': 240}
                 tooltip(**tooltip_args)
             self.last_tooltip_msg = msg
 
