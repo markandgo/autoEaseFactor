@@ -144,7 +144,8 @@ class EaseAlgorithm(object):
                 if idx % row_limit == 0:
                     printable_review_list += '<br>'
                 printable_review_list += str(i) + ', '
-            printable_review_list += str(review_list[-1])
+            if len(review_list) > 0:
+                printable_review_list += str(review_list[-1])
 
             msg = f"card ID: {card_id}<br>"
                    # f"average ease: {round(avg_ease, 4)}<br>"
