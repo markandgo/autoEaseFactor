@@ -1,4 +1,5 @@
 # experimentalCardEaseFactor
+
 Dynamically adjusts ease factor on cards automatically, constantly seeking the
 right ease adjustment to hit a target success rate.
 
@@ -9,14 +10,13 @@ Important: **You must not use an interval modifier in your deck options**.
 Your interval modifier must be set to 100% (no change) for all decks. Otherwise
 this algorithm could be constantly chasing a moving target.
 
-WARNING: This makes your ease factors move much more than you are probably used
-to. Missing a few reviews can make them drop a lot. But if you get the next
-review or two, it will climb back really fast. You can limit these swings in
-the config, though arguably it's ok not to constrain these moves too much,
-because they self-correct over time. Strongly advise you ignore your ease after
-installing this add on and just let it do its thing.
+WARNING: This can make your ease factors move more than normal. Missing a few
+reviews can make them drop a lot. But if you get the next review or two, it
+will climb back really fast. You can limit these swings in the config, though
+arguably it's better not to constrain these moves too much, because they
+self-correct over time.
 
-### Differences from eshapard's version
+#### Differences from eshapard's version
 
 Unlike eshapard's version, which requires four reviews before the algorithm
 kicks in, this version lets the algorithm adjust ease factors as early as
@@ -73,6 +73,12 @@ performance. (This is very sensitive, values between 0.07 and 0.3 are
 reasonable).
 4. min_ and max_ ease set the bounds of how far the algorithm can set the
 ease. This is "per mille," so 5000 = 500%.
+5. two_button_mode makes the system "pass/fail" -- you can disable that by
+setting this to false (though saving mental load on each review is the primary
+benefit of this add-on, would recommend you leave this true if you can).
+
+(I use a min of 10 and max of 7000 and leash of 300, and ease changes a lot,
+but it ends up working well for me.)
 
 ## YesOrNo.py
 Hard and easy add more choices that delay reviews and make you responsible for
@@ -87,15 +93,91 @@ I suggest that you use the YesOrNo addon and that you disable
 Seeing the next review times will just distract you from studying.
 
 ## Acknowledgments
-- eshapard
-- ja-dark
-- cordone
-- Also, hat tip to the MIA crew for inspiration and to the AnKing for helping me
-figure out how all this works
+eshapard
+ja-dark
+cordone
+brownbat (me)
+(hat tip to the MIA crew for inspiration and to the AnKing for helping me
+figure out how all this works)
 
 I am not requesting support, but the original author, eshapard, can receive
 tips at this link:
 https://paypal.me/eshapard/1
 
-On AnkiWeb here:
-https://ankiweb.net/shared/info/1672712021
+### Changes
+
+#### 2020-08-09
+
+Bugfix for formatted stats on new cards
+
+#### 2020-08-08
+
+Slight formatting adjustment for stats. Also updates "tests[.]py" to be more
+accurate. Unfortunately "tests" still does not predict the algorithm's behavior
+exactly. I am expecting a better simulator next patch, after some additional
+debugging. (In the meantime, if you open "tests[.]py" and hardcode a list of
+ease factors, as in the commented-out example from lines 272 to 279, you will
+get an accurate simulation.)
+
+#### 2020-08-06
+
+Adding four-button mode as an option, for those who don't want to use the
+Pass/Fail mode. I'd caution against using this though, the algorithm's main
+benefit is reducing your thinking time on each card.
+
+#### 2020-08-06
+
+Fixes error with filtered decks introduced during last change. Note: Ease
+factors may dip to 250% during a filtered review, but should correct themselves
+as soon as you return to regularly scheduled reviews. I'm still investigating
+to ensure this works for people who rely on filtered reviews for rescheduling,
+please comment on the issue in github if you have experience with this and
+notice any odd behavior:
+
+https://github.com/brownbat/experimentalCardEaseFactor/issues/5
+
+#### 2020-08-02
+
+Initial ease factor now honors the value in the individual deck settings,
+instead of pulling from this add-on's config. Hat tip to blahab for talking
+me through this change.
+
+#### 2020-08-01
+
+- Issues enabled on GitHub, thanks for catching that!
+
+Note: The algorithm gets information from learning steps by design. In my
+personal experience, if a card was very hard to learn, it often needs to be
+reviewed sooner. Once I've got it down, the algorithm will very quickly bring
+the ease back up.
+
+**However,** if you prefer esharphard's original approach, where learning steps
+are ignored for ease, lower the "leash" value in settings, so that early reps
+will not have much of an influence.
+
+For my settings, I'm generally just using a couple learning steps (ie, 15 240)
+to let the algorithm take over as quickly as possible. I experimented with much
+longer learning periods with specific intervals, but my results were
+significantly worse, with many cards having poor retention, and other easy
+cards taking learning reps I didn't really need. I prefer performance-based
+feedback as quickly as possible. If you prefer setting a very large number of
+learning steps, that's fine too, this algorithm will still work, but you may
+want to adjust the "leash" value down quite a bit. If you have 10 learning
+steps, a leash between 10 and 50 might be best for you.
+
+#### 2020-07-25
+
+- Remove unhandled exception. This may cause errors during review when combined
+with other add-ons that create empty Notes. Please report any errors to
+https://github.com/brownbat/experimentalCardEaseFactor
+
+#### 2020-06-14
+
+- Added config options that help limit how much the algorithm can change your
+ease.
+- Corrected moving average initialization to avoid too much weight placed on
+first step.
+
+#### 2020-06-11
+
+Added config options.
