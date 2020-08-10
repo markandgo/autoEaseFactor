@@ -77,8 +77,9 @@ ease. This is "per mille," so 5000 = 500%.
 setting this to false (though saving mental load on each review is the primary
 benefit of this add-on, would recommend you leave this true if you can).
 
-(I use a min of 10 and max of 7000 and leash of 300, and ease changes a lot,
-but it ends up working well for me.)
+(I personally use a min of 10 and max of 7000 and leash of 300. I try to keep
+learning and relearning steps to a minimum, 2-3. Ease changes a lot, but it
+ends up working well for me.)
 
 ## YesOrNo.py
 Hard and easy add more choices that delay reviews and make you responsible for
