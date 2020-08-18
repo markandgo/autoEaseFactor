@@ -94,3 +94,53 @@ def myAnswerButtons(self, _old) -> str:
 
 Reviewer._answerButtons =\
     wrap(Reviewer._answerButtons, myAnswerButtons, 'around')
+
+# Replace with below if hook accepted. See PR 735: https://github.com/ankitects/anki/pull/735
+'''
+from aqt import mw
+from aqt import gui_hooks
+
+rightLabel = "Pass"
+wrongLabel = "Fail"
+
+# default map:
+# 2 buttons:    1 (again) 2 (good) 3 (none) 4 (none)
+# 3b:           1 (again) 2 (good) 3 (easy) 4 (none)
+# 4b:           1 (again) 2 (hard) 3 (good) 4 (easy)
+# (also 0 (None) in each row)
+
+# remap:
+# 2 buttons:    1 (again) 2 (good) 2 (good) 2 (good)
+# 3b:           1 (again) 2 (good) 2 (good) 2 (good)
+# 4b:           1 (again) 3 (good) 3 (good) 3 (good)
+
+remap = {2:  [None, 1, 2, 2, 2],
+         3:  [None, 1, 2, 2, 2],
+         4:  [None, 1, 3, 3, 3]}
+
+black = '#000'
+red = '#c33'
+green = '#080'
+
+BUTTON_LABEL = ['<span style="color:' + black + ';">' + wrongLabel + '</span>',
+                '<span style="color:' + green + ';">' + rightLabel + '</span>']
+
+
+def two_button_mode(button_tuple, reviewer, card):
+    button_count = mw.col.sched.answerButtons(card)
+    if button_count in [2, 3]:
+        button_tuple = ((1, BUTTON_LABEL[0]), (2, BUTTON_LABEL[1]))
+    else:
+        button_tuple = ((1, BUTTON_LABEL[0]), (3, BUTTON_LABEL[1]))
+    return button_tuple
+
+
+def remap_answers(ease_tuple, reviewer, card):
+    button_count = mw.col.sched.answerButtons(card)
+    new_ease = remap[button_count][ease_tuple[1]]
+    return (ease_tuple[0], new_ease)
+
+
+gui_hooks.reviewer_will_init_answer_buttons.append(two_button_mode)
+gui_hooks.reviewer_will_answer_card.append(remap_answers)
+'''
