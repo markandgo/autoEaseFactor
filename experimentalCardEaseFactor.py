@@ -121,6 +121,7 @@ class EaseAlgorithm(object):
 
     def adjust_ease(self):
         card_id = mw.reviewer.card.id
+        last_factor = self.get_ease_list(card_id)[-1]
         calculated_ease = self.calculate_ease(card_id)
         self.factor = calculated_ease
 
@@ -149,8 +150,20 @@ class EaseAlgorithm(object):
                     printable_review_list += ", " + str(_)
 
             msg = f"card ID: {card_id}<br>"
-            # msg += f"Card Queue: {mw.reviewer.card.queue}<br>"
+            
+            card_types = {0:"new", 1:"learn", 2:"review", 3:"relearn"}
+            queue_types = {0:"new", 
+                           1:"relearn", 
+                           2:"review", 
+                           3:"day (re)lrn", 
+                           4:"preview", 
+                           -1:"suspended", 
+                           -2:"sibling buried", 
+                           -3:"manually buried"}
+            msg += f"Card Queue: {queue_types[mw.reviewer.card.queue]}<br>"
+            msg += f"Card Type: {card_types[mw.reviewer.card.type]}<br>"
             msg += f"MAvg success rate: {round(success_rate, 4)}<br>"
+            msg += f"Last factor: {last_factor}<br>"
             msg += f"MAvg factor: {round(avg_ease, 2)}<br>"
             msg += f"Suggested factor: {calculated_ease}<br>"
             msg += f"Review list: {printable_review_list}<br>"
