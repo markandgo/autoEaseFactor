@@ -121,7 +121,10 @@ class EaseAlgorithm(object):
 
     def adjust_ease(self):
         card_id = mw.reviewer.card.id
-        last_factor = self.get_ease_list(card_id)[-1]
+        ease_list = self.get_ease_list(card_id)
+        last_factor = None
+        if len(ease_list) > 0:
+            last_factor = ease_list[-1]
         calculated_ease = self.calculate_ease(card_id)
         self.factor = calculated_ease
 
