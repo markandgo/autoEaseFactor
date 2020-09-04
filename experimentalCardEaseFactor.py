@@ -152,27 +152,39 @@ class EaseAlgorithm(object):
                 for _ in abbr_review_list[1:]:
                     printable_review_list += ", " + str(_)
 
+            card_types = {0: "new", 1: "learn", 2: "review", 3: "relearn"}
+            queue_types = {0: "new",
+                           1: "relearn",
+                           2: "review",
+                           3: "day (re)lrn",
+                           4: "preview",
+                           -1: "suspended",
+                           -2: "sibling buried",
+                           -3: "manually buried"}
+
             msg = f"card ID: {card_id}<br>"
-            
-            card_types = {0:"new", 1:"learn", 2:"review", 3:"relearn"}
-            queue_types = {0:"new", 
-                           1:"relearn", 
-                           2:"review", 
-                           3:"day (re)lrn", 
-                           4:"preview", 
-                           -1:"suspended", 
-                           -2:"sibling buried", 
-                           -3:"manually buried"}
-            msg += f"Card Queue: {queue_types[mw.reviewer.card.queue]}<br>"
-            msg += f"Card Type: {card_types[mw.reviewer.card.type]}<br>"
+            msg += (f"Card Queue (Type): {queue_types[mw.reviewer.card.queue]}"
+                    f" ({card_types[mw.reviewer.card.type]})<br>")
             msg += f"MAvg success rate: {round(success_rate, 4)}<br>"
             msg += f"Last factor: {last_factor}<br>"
             msg += f"MAvg factor: {round(avg_ease, 2)}<br>"
             msg += f"Suggested factor: {calculated_ease}<br>"
             msg += f"Review list: {printable_review_list}<br>"
-            tooltip_args = {'msg': msg, 'period': stats_duration}
-            if anki213:
-                tooltip_args.update({'x_offset': 12, 'y_offset': 240})
+            tooltip_args = {'msg': msg, 'period': stats_duration,
+                            'x_offset': 12, 'y_offset': 240}
+
+            if not anki213:
+                msg = f"card ID: {card_id}<br>"
+                msg += (f"Card Queue (Type): "
+                        f"{queue_types[mw.reviewer.card.queue]}"
+                        f" ({card_types[mw.reviewer.card.type]})<br>")
+                msg += f"MAvg success rate: {round(success_rate, 4)}<br>"
+                msg += (f"MAvg factor (Last factor): {round(avg_ease, 2)}  "
+                        f"({last_factor})<br>")
+                msg += f"Suggested factor: {calculated_ease}<br>"
+                msg += f"Review list: {printable_review_list}<br>"
+                tooltip_args = {'msg': msg, 'period': stats_duration}
+
             tooltip(**tooltip_args)
 
 
