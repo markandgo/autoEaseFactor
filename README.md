@@ -1,4 +1,4 @@
-# experimentalCardEaseFactor
+# Auto Ease Factor
 
 Dynamically adjusts ease factor on cards automatically, constantly seeking the
 right ease adjustment to hit a target success rate.
@@ -54,10 +54,10 @@ Then use this code:
 
 #### Manual installation
 
-Create a new folder named *experimentalCardEaseFactor* in your Anki 2.1 addons
-directory. Save `__init__.py`, `experimentalCardEaseFactor.py` and `YesOrNo.py`
-to this folder. If you don't want to use `YesOrNo.py`, don't include it, and
-remove it from `__init__.py`.
+Create a new folder named *autoEaseFactor* in your Anki 2.1 addons
+directory. Save `__init__.py`, `autoEaseFactor.py` and `YesOrNo.py`
+to this folder. If you don't want to use `YesOrNo.py`, you can still set the 
+config option to disable it.
 
 ### Configuration
 There are a few options that can be configured by editing the addon:
@@ -135,7 +135,7 @@ to ensure this works for people who rely on filtered reviews for rescheduling,
 please comment on the issue in github if you have experience with this and
 notice any odd behavior:
 
-https://github.com/brownbat/experimentalCardEaseFactor/issues/5
+https://github.com/brownbat/autoEaseFactor/issues/5
 
 #### 2020-08-02
 
@@ -170,7 +170,7 @@ steps, a leash between 10 and 50 might be best for you.
 
 - Remove unhandled exception. This may cause errors during review when combined
 with other add-ons that create empty Notes. Please report any errors to
-https://github.com/brownbat/experimentalCardEaseFactor
+https://github.com/brownbat/autoEaseFactor
 
 #### 2020-06-14
 
