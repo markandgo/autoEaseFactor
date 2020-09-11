@@ -288,10 +288,10 @@ def import_ease_factors(deck_id, factors=None):
 
 
 def add_deck_options(menu, deck_id):
-    export_action = menu.addAction("Export Ease Factors")
+    export_action = menu.addAction("Export Ease Factors (AEF)")
     export_action.triggered.connect(lambda _,
                                     did=deck_id: export_ease_factors(did))
-    import_action = menu.addAction("Import Ease Factors")
+    import_action = menu.addAction("Import Ease Factors (AEF)")
     import_action.triggered.connect(lambda _,
                                     did=deck_id: import_ease_factors(did))
     adjust_action = menu.addAction("Adjust Ease Factors To Performance")
