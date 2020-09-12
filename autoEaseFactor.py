@@ -16,8 +16,10 @@ from aqt.utils import getFile, getSaveFile
 import datetime
 from ast import literal_eval
 
+import packaging
 
 anki213 = version.startswith("2.1.3")
+anki2126 = packaging.version.parse(version) >= packaging.version.parse("2.1.26")
 config = mw.addonManager.getConfig(__name__)
 
 target_ratio = config.get('target_ratio', 0.85)
@@ -42,15 +44,15 @@ class EaseAlgorithm(object):
         self.last_ease = None
 
     @staticmethod
-    def calculate_moving_average(l, init=None):
-        assert len(l) > 0
+    def calculate_moving_average(value_list, init=None):
+        assert len(value_list) > 0
         if init is None:
-            result = sum(l)/len(l)
+            result = sum(value_list)/len(value_list)
         else:
             result = init
-        for i in l:
+        for this_item in value_list:
             result = (result * (1 - moving_average_weight))
-            result += i * moving_average_weight
+            result += this_item * moving_average_weight
         return result
 
     def set_last_ease(self, new_last_ease):
@@ -276,6 +278,9 @@ def import_ease_factors(deck_id, factors=None):
         # open file picker to load factors
         import_file = getFile(mw, _("Import"), None,
                               key="import")
+        if import_file == []:
+            # no file selected
+            return
         with open(import_file, 'r') as import_file_object:
             factors = literal_eval(import_file_object.read())
 
@@ -298,5 +303,5 @@ def add_deck_options(menu, deck_id):
     adjust_action.triggered.connect(lambda _,
                                     did=deck_id: adjust_ease_factors(did))
 
-
-gui_hooks.deck_browser_will_show_options_menu.append(add_deck_options)
+if anki2126:
+    gui_hooks.deck_browser_will_show_options_menu.append(add_deck_options)
