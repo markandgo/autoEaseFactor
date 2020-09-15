@@ -35,7 +35,7 @@ quickly after I know a card well.
 
 #### In Anki,
 
-    Tools &gt; Add-ons &gt; Get Add-ons...
+    Tools > Add-ons > Get Add-ons...
 
 Then use this code:
 
