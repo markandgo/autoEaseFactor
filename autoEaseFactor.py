@@ -16,10 +16,8 @@ from aqt.utils import getFile, getSaveFile
 import datetime
 from ast import literal_eval
 
-import packaging
-
 anki213 = version.startswith("2.1.3")
-anki2126 = packaging.version.parse(version) >= packaging.version.parse("2.1.26")
+anki2126 = version.startswith("2.1.26") or anki213
 config = mw.addonManager.getConfig(__name__)
 
 target_ratio = config.get('target_ratio', 0.85)
