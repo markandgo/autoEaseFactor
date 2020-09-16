@@ -44,8 +44,8 @@ Then use this code:
 #### Manual installation
 
 Create a new folder named *autoEaseFactor* in your Anki addons
-directory. Save `<a href="http://__init__.py" rel="nofollow">__init__.py</a>`, `<a href="http://autoEaseFactor.py" rel="nofollow">autoEaseFactor.py</a>` and `<a href="http://YesOrNo.py" rel="nofollow">YesOrNo.py</a>`
-to this folder. If you don't want to use `<a href="http://YesOrNo.py" rel="nofollow">YesOrNo.py</a>`, you can simply disable 2-button mode in settings.
+directory. Save <a href="http://__init__.py" rel="nofollow">__init__.py</a>, <a href="http://autoEaseFactor.py" rel="nofollow">autoEaseFactor.py</a> and <a href="http://YesOrNo.py" rel="nofollow">YesOrNo.py</a>
+to this folder. If you don't want to use <a href="http://YesOrNo.py" rel="nofollow">YesOrNo.py</a>, you can simply disable 2-button mode in settings.
 
 ### Configuration
 There are a few options that can be configured by editing the addon:
@@ -79,26 +79,30 @@ I suggest that you use the YesOrNo addon and that you disable
 Seeing the next review times will just distract you from studying.
 
 If you just want to try this out, but you're worried about losing all the ease factors you've built up so far, 
-there's another add-on that lets you export a deck's current ease factors and re-import them later.
+the latest version lets you export a deck's current ease factors and re-import them later.
 You could use that to "save" your ease settings for a deck, try this add-on, then if you don't like it, 
-reload your old ease settings later.
+reload your old ease settings later. Hat tip to RisingOrange for the inspiration, also check out his add-on:
 Reset Ease Automatically:
 <a href="https://ankiweb.net/shared/info/12081346" rel="nofollow">https://ankiweb.net/shared/info/12081346</a>
-(Import/Export Ease Factors is added to individual deck settings with that add-on.)
+
 
 ## Acknowledgments
-eshapard
-ja-dark
-cordone
-brownbat (me)
-(hat tip to the MIA crew for inspiration and to the AnKing for helping me
-figure out how all this works)
+- eshapard
+- ja-dark
+- cordone
+- risingorange
+- the MIA crew
+- the AnKing
 
 I am not requesting support, but the original author, eshapard, can receive
 tips at this link:
 <a href="https://paypal.me/eshapard/1" rel="nofollow">https://paypal.me/eshapard/1</a>
 
 ### Changes
+
+#### 2020-09-14
+
+Add import/export ease settings to deck options (plus some bugfixes associated with that change).
 
 #### 2020-09-07
 
