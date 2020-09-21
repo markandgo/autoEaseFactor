@@ -79,7 +79,7 @@ window = sg.Window('Table Simulation', layout)
 
 def calculate(card_settings=None):
     # TODO: stop calculation if insufficient ease values
-    # should factor count be one greater than answer count?
+    # len factor == len reviews, produces new factor
     config_settings = {}
     config_settings['leash'] = int(values['leash'])
     config_settings['min_ease'] = int(values['min_ease'])
@@ -94,11 +94,13 @@ def calculate(card_settings=None):
     return new_factor
 
 def calculate_all(card_settings):
-    if len(card_settings['review_list']) == len(card_settings['factor_list']):
-        return card_settings
-    else:
-        card_settings['factor_list'].append(calculate(card_settings))
-        return calculate_all(card_settings)
+    new_factor_list = [card_settings['factor_list'][0]]
+    for count in range(1, 1 + len(card_settings['review_list'])):
+        tmp_review_list = card_settings['review_list'][:count]
+        new_factor = calculate({'review_list':tmp_review_list, 'factor_list': new_factor_list})
+        new_factor_list.append(new_factor)
+    card_settings['factor_list'] = new_factor_list
+    return card_settings
 
 while True:
     event, values = window.read()
