@@ -3,3 +3,4 @@ anki_testing
 *.zip
 roadmap.*
 share_addon.txt
+__pycache__/*
