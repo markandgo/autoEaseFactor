@@ -3,7 +3,9 @@ import math
 
 sg = PySimpleGUIQt
 
-# TODO validation
+# TODO isolate discrepancies, align with main
+# maybe just copy these functions to main, separate out the db calls
+# for easier, more consistent testing 
 
 
 def calculate_moving_average(value_list, weight, init=None):
