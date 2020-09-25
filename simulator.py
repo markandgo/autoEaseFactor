@@ -1,11 +1,14 @@
-import PySimpleGUIQt
 import math
 
-sg = PySimpleGUIQt
+try:
+    import PySimpleGUIQt as PySGQt
+except ImportError:
+    import _PySimpleGUIQt as PySGQt
+
 
 # TODO isolate discrepancies, align with main
 # maybe just copy these functions to main, separate out the db calls
-# for easier, more consistent testing 
+# for easier, more consistent testing
 
 
 def calculate_moving_average(value_list, weight, init=None):
@@ -69,25 +72,30 @@ def calculate_ease(config_settings, card_settings):
     return suggested_factor
 
 
-layout = [[sg.Text('Leash', size=(10, 1)), sg.Input('300', key='leash')],
-          [sg.Text('Min Ease', size=(10, 1)), sg.Input('10', key='min_ease')],
-          [sg.Text('Max Ease', size=(10, 1)), sg.Input('7000', key='max_ease')],
-          [sg.Text('MAvg Weight', size=(10, 1)), sg.Input('0.2', key='weight')],
-          [sg.Text('Target', size=(10, 1)), sg.Input('0.85', key='target')],
-          [sg.Text('Answer History', size=(10, 1)),
-           sg.Input('1 3 3', key='answers')],
-          [sg.Text('Factor History', tooltip='Or initial ease factor if '
-                   'recalculating ease history', size=(10, 1)),
-              sg.Input('2500 1900 1700', tooltip='If recalculting history, '
-                       'starting ease factor will be taken from first value',
-                       key='factors')],
-          [sg.Checkbox('Recalculate Ease History', default=True,
-                       key='recalculate')],
-          [sg.Text('_'*40)],
-          [sg.Button('Calculate'), sg.Text('', key='suggested_factor')],
+layout = [[PySGQt.Text('Leash', size=(10, 1)),
+           PySGQt.Input('300', key='leash')],
+          [PySGQt.Text('Min Ease', size=(10, 1)),
+           PySGQt.Input('10', key='min_ease')],
+          [PySGQt.Text('Max Ease', size=(10, 1)),
+           PySGQt.Input('7000', key='max_ease')],
+          [PySGQt.Text('MAvg Weight', size=(10, 1)),
+           PySGQt.Input('0.2', key='weight')],
+          [PySGQt.Text('Target', size=(10, 1)),
+           PySGQt.Input('0.85', key='target')],
+          [PySGQt.Text('Answer History', size=(10, 1)),
+           PySGQt.Input('1 3 3', key='answers')],
+          [PySGQt.Text('Factor History', tooltip='Or initial ease factor if '
+                       'recalculating ease history', size=(10, 1)),
+              PySGQt.Input('2500 1900 1700', tooltip='If recalculting history,'
+                           ' starting ease factor will be taken from first'
+                           ' value', key='factors')],
+          [PySGQt.Checkbox('Recalculate Ease History', default=True,
+                           key='recalculate')],
+          [PySGQt.Text('_'*40)],
+          [PySGQt.Button('Calculate'), PySGQt.Text('', key='suggested_factor')],
           ]
 
-window = sg.Window('Table Simulation', layout)
+window = PySGQt.Window('Table Simulation', layout)
 
 
 def calculate(card_settings=None):
@@ -147,15 +155,16 @@ def validate_all():
 
 while True:
     event, values = window.read()
-    if event is None or event in (sg.WIN_CLOSED, 'Exit'):
+    if event is None or event in (PySGQt.WIN_CLOSED, 'Exit'):
         break
     elif event == 'Calculate':
         if validate_all():
             if values['recalculate']:
                 recalc_settings = {}
-                recalc_settings['review_list'] = [int(_) for _ in
-                                                  values['answers'].split()]
-                recalc_settings['factor_list'] = [int(values['factors'].split()[0])]
+                recalc_settings['review_list'] = [
+                        int(_) for _ in values['answers'].split()]
+                recalc_settings['factor_list'] = [
+                        int(values['factors'].split()[0])]
                 new_factors = calculate_all(recalc_settings)['factor_list']
                 window['suggested_factor'].update(new_factors)
             else:
