@@ -1,8 +1,7 @@
 import math
-import ease_calculator
+from . import ease_calculator
 
 
-import ease_calculator
 calculate_ease = ease_calculator.calculate_ease
 calculate_all = ease_calculator.calculate_all
 # import autoEaseFactor
@@ -10,7 +9,7 @@ calculate_all = ease_calculator.calculate_all
 try:
     import PySimpleGUIQt as PySGQt
 except ImportError:
-    import _PySimpleGUIQt as PySGQt
+    from . import _PySimpleGUIQt as PySGQt
 
 # TODO
 # last factor missing from tooltip
