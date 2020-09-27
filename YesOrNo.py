@@ -97,6 +97,21 @@ Reviewer._answerButtons =\
 
 # Replace with below if hook accepted. See PR 735: https://github.com/ankitects/anki/pull/735
 '''
+
+"""can version check with:
+def version_greater(v1, v2):
+  v1_list = v1.split(".")
+  v2_list = v2.split(".")
+  is_greater = True
+  v1_list...
+
+from anki import version
+anki2133 = True
+ver_list = version.split(".")
+if int(ver_list[0]) < 2 or int(ver_list[1]) < 1 or int(ver_list[2]) < 33:
+    anki2133 = False
+"""
+
 from aqt import mw
 from aqt import gui_hooks
 
