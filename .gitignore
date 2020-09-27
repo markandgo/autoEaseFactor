@@ -4,3 +4,4 @@ anki_testing
 roadmap.*
 share_addon.txt
 __pycache__/*
+.git/*
