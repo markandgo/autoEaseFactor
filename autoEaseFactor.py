@@ -166,8 +166,8 @@ def adjust_factor(ease_tuple,
                   reviewer=reviewer.Reviewer,
                   card=mw.reviewer.card):
     assert card is not None
+    new_answer = ease_tuple[1]
     if card.queue == 2 or not reviews_only:
-        new_answer = ease_tuple[1]
         card.factor = suggested_factor(card, new_answer)
     if stats_enabled:
         display_stats(new_answer)
