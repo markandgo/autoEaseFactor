@@ -13,12 +13,14 @@ from aqt.utils import tooltip
 from aqt.qt import QMessageBox
 from anki.lang import _
 
+
+# add on utilities
+from . import ease_calculator
+
 # version
 anki213 = version.startswith("2.1.3")
 anki2126 = version.startswith("2.1.26") or anki213
 
-# add on utilities
-from . import ease_calculator
 if anki2126:
     from . import deck_settings
 # from . import menu_action
@@ -37,6 +39,7 @@ max_ease = config.get('max_ease', 5000)
 # let ease change by leash * card views, so leash gets longer quickly
 # prevents wild swings from early reviews
 leash = config.get('leash', 100)
+reviews_only = config.get('reviews_only', False)
 
 config_settings = {
     'leash': leash,
@@ -44,15 +47,24 @@ config_settings = {
     'max_ease': max_ease,
     'weight': moving_average_weight,
     'target': target_ratio,
-    'starting_ease_factor': None
-                  }
+    'starting_ease_factor': None,
+    'reviews_only': reviews_only
+    }
 
-def get_reviews(card=mw.reviewer.card):
+
+def get_all_reps(card=mw.reviewer.card):
     return mw.col.db.list(("select ease from revlog where cid = ?"), card.id)
+
+
+def get_reviews_only(card=mw.reviewer.card):
+    return mw.col.db.list(("select ease from revlog where type = 1"
+                           " and cid = ?"), card.id)
+
 
 def get_ease_factors(card=mw.reviewer.card):
     return mw.col.db.list("select factor from revlog where cid = ?"
-                               " and factor > 0", card.id)
+                          " and factor > 0", card.id)
+
 
 def get_starting_ease(card=mw.reviewer.card):
     deck_id = card.did
@@ -71,7 +83,10 @@ def suggested_factor(card=mw.reviewer.card, new_answer=None):
 
     """Wraps calculate_ease()"""
     card_settings = {}
-    card_settings['review_list'] = get_reviews(card)
+    if reviews_only:
+        card_settings['review_list'] = get_reviews_only(card)
+    else:
+        card_settings['review_list'] = get_all_reps(card)
     if new_answer is not None:
         card_settings['review_list'].append(new_answer)
     card_settings['factor_list'] = get_ease_factors(card)
@@ -83,32 +98,33 @@ def suggested_factor(card=mw.reviewer.card, new_answer=None):
 
 
 def get_stats(card=mw.reviewer.card, new_answer=None):
-    review_list = get_reviews(card)
+    rep_list = get_all_reps(card)
     if new_answer:
-        review_list.append(new_answer)
+        rep_list.append(new_answer)
     factor_list = get_ease_factors(card)
     weight = config_settings['weight']
     target = config_settings['target']
 
-    if review_list is None or len(review_list) < 1:
+    if rep_list is None or len(rep_list) < 1:
         success_rate = target
     else:
-        success_list = [int(_ > 1) for _ in review_list]
-        success_rate = ease_calculator.moving_average(success_list, weight, init=target)
+        success_list = [int(_ > 1) for _ in rep_list]
+        success_rate = ease_calculator.moving_average(success_list,
+                                                      weight, init=target)
     if factor_list and len(factor_list) > 0:
         average_ease = ease_calculator.moving_average(factor_list, weight)
     else:
         average_ease = config_settings['starting_ease_factor']
 
     # add last review (maybe simplify by doing this after new factor applied)
-    printable_review_list = ""
-    if len(review_list) > 0:
-        abbr_review_list = review_list[-10:]
-        if len(review_list) > 10:
-            printable_review_list += '..., '
-        printable_review_list += str(abbr_review_list[0])
-        for review_result in abbr_review_list[1:]:
-            printable_review_list += ", " + str(review_result)
+    printable_rep_list = ""
+    if len(rep_list) > 0:
+        truncated_rep_list = rep_list[-10:]
+        if len(rep_list) > 10:
+            printable_rep_list += '..., '
+        printable_rep_list += str(truncated_rep_list[0])
+        for rep_result in truncated_rep_list[1:]:
+            printable_rep_list += ", " + str(rep_result)
     if factor_list and len(factor_list) > 0:
         last_factor = factor_list[-1]
     else:
@@ -129,8 +145,11 @@ def get_stats(card=mw.reviewer.card, new_answer=None):
     msg += f"MAvg success rate: {round(success_rate, 4)}<br>"
     msg += f"Last factor: {last_factor}<br>"
     msg += f"MAvg factor: {round(average_ease, 2)}<br>"
-    msg += f"Suggested factor: {suggested_factor(card, new_answer)}<br>"
-    msg += f"Review list: {printable_review_list}<br>"
+    if card.queue != 2 and reviews_only:
+        msg += f"Suggested factor: NONREVIEW, NO CHANGE<br>"
+    else:
+        msg += f"Suggested factor: {suggested_factor(card, new_answer)}<br>"
+    msg += f"Rep list: {printable_rep_list}<br>"
     return msg
 
 
@@ -147,8 +166,9 @@ def adjust_factor(ease_tuple,
                   reviewer=reviewer.Reviewer,
                   card=mw.reviewer.card):
     assert card is not None
-    new_answer = ease_tuple[1]
-    card.factor = suggested_factor(card, new_answer)
+    if card.queue == 2 or not reviews_only:
+        new_answer = ease_tuple[1]
+        card.factor = suggested_factor(card, new_answer)
     if stats_enabled:
         display_stats(new_answer)
     return ease_tuple
