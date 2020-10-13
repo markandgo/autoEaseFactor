@@ -55,3 +55,12 @@ four-button mode, you can set this to false, though caveat emptor, the main
 benefit of this algorithm is reducing the thinking time on each individual
 card.
 - default: true
+
+**reviews_only**
+
+- *WARNING WARNING WARNING* This will limit the amount of data used by the
+algorithm, sometimes severely. Cards that spend a significant amount of
+time in learning or relearning (your hardest cards) will suddenly benefit
+much less and adapt the most slowly to your actual performance.
+*I STRONGLY ADVISE YOU DO NOT CHANGE THIS SETTING!*
+- default: false
