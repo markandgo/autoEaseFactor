@@ -1,6 +1,11 @@
 from aqt.gui_hooks import deck_browser_will_show_options_menu
-from . import simulator
 from aqt import mw
+
+try:
+    import simulator
+except ImportError:
+    from .autoEaseFactor import simulator
+
 
 from PyQt5.QtWidgets import QAction
 
