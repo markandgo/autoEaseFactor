@@ -23,7 +23,7 @@ anki2126 = version.startswith("2.1.26") or anki213
 
 if anki2126:
     from . import deck_settings
-# from . import menu_action
+    from . import menu_action
 
 config = mw.addonManager.getConfig(__name__)
 
