@@ -62,6 +62,10 @@ class Version:
                 retval = int(self.patch) < int(other.patch)
                 if int(self.patch) == int(other.patch):
                     final = False
+                    # no prerelease fields
+                    if (len(self.prerelease_parts) == 0 and
+                       len(other.prerelease_parts) == 0):
+                        final = True
                     # larger set of prerelease fields takes higher precedence
                     if (len(self.prerelease_parts) < len(other.prerelease_parts)
                             and other.prerelease.find(self.prerelease) == 0):
@@ -138,13 +142,17 @@ examples.append(Version("1.0.0"))
 examples.append(Version("2.0.0"))
 examples.append(Version("2.1.0"))
 examples.append(Version("2.1.1"))
+examples.append(Version("2.1.26"))
+examples.append(Version("2.1.26"))
 # examples.append(Version("4.1"))  # invalid according to semver guidelines
 
 
-def test(a, b):
-    print(f"a: {a}")
-    print(f"b: {b}")
+def verbose(a):
+    for i in a.__dict__:
+        print(i, a.__dict__[i])
 
+
+def test(a, b):
     if a < b:
         print(f"{a} < {b}")
     if a <= b:

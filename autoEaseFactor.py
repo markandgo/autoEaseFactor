@@ -18,7 +18,7 @@ from anki.lang import _
 from . import ease_calculator
 from . import semver
 
-if Version(version) > semver.Version("2.1.26"):
+if semver.Version(version) > semver.Version("2.1.26"):
     from . import deck_settings
     # window vs. widget error
     # from . import menu_action
@@ -151,7 +151,7 @@ def display_stats(new_answer=None):
     card = mw.reviewer.card
     msg = get_stats(card, new_answer)
     tooltip_args = {'msg': msg, 'period': stats_duration}
-    if Version(version) > semver.Version("2.1.30"):
+    if semver.Version(version) > semver.Version("2.1.30"):
         tooltip_args.update({'x_offset': 12, 'y_offset': 240})
     tooltip(**tooltip_args)
 
