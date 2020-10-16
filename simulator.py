@@ -1,23 +1,24 @@
 import math
 
 # python imports are a mess
-try:
+# standalone
+if __name__ == "__main__":
     import ease_calculator
-except ImportError:
-    from .autoEaseFactor import ease_calculator
-
-
-calculate_ease = ease_calculator.calculate_ease
-calculate_all = ease_calculator.calculate_all
-# import autoEaseFactor
-
-try:
-    import PySimpleGUIQt as PySGQt
-except ImportError:
+    calculate_ease = ease_calculator.calculate_ease
+    calculate_all = ease_calculator.calculate_all
     try:
-        from .autoEaseFactor import _PySimpleGUIQt as PySGQt
+        import PySimpleGUIQt as PySGQt
     except ImportError:
         import _PySimpleGUIQt as PySGQt
+else:
+    # embedded
+    from . import ease_calculator
+    calculate_ease = ease_calculator.calculate_ease
+    calculate_all = ease_calculator.calculate_all
+    try:
+        from . import PySimpleGUIQt as PySGQt
+    except ImportError:
+        from . import _PySimpleGUIQt as PySGQt
 
 
 

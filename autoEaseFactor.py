@@ -16,14 +16,12 @@ from anki.lang import _
 
 # add on utilities
 from . import ease_calculator
+from . import semver
 
-# version
-anki213 = version.startswith("2.1.3")
-anki2126 = version.startswith("2.1.26") or anki213
-
-if anki2126:
+if Version(version) > semver.Version("2.1.26"):
     from . import deck_settings
-    from . import menu_action
+    # window vs. widget error
+    # from . import menu_action
 
 config = mw.addonManager.getConfig(__name__)
 
@@ -32,12 +30,8 @@ moving_average_weight = config.get('moving_average_weight', 0.2)
 stats_enabled = config.get('stats_enabled', True)
 stats_duration = config.get('stats_duration', 5000)
 
-# Limit how aggressive the algorithm is
 min_ease = config.get('min_ease', 1000)
-# over 7k the time savings are minimal and the risk of miscalculation is higher
 max_ease = config.get('max_ease', 5000)
-# let ease change by leash * card views, so leash gets longer quickly
-# prevents wild swings from early reviews
 leash = config.get('leash', 100)
 reviews_only = config.get('reviews_only', False)
 
@@ -157,7 +151,7 @@ def display_stats(new_answer=None):
     card = mw.reviewer.card
     msg = get_stats(card, new_answer)
     tooltip_args = {'msg': msg, 'period': stats_duration}
-    if anki213:
+    if Version(version) > semver.Version("2.1.30"):
         tooltip_args.update({'x_offset': 12, 'y_offset': 240})
     tooltip(**tooltip_args)
 
