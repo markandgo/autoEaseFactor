@@ -18,7 +18,7 @@ from anki.lang import _
 from . import ease_calculator
 from . import semver
 
-if semver.Version(version) > semver.Version("2.1.26"):
+if semver.Version(version) >= semver.Version("2.1.26"):
     from . import deck_settings
     # window vs. widget error
     # from . import menu_action
