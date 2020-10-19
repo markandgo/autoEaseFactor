@@ -27,7 +27,7 @@ BUTTON_LABEL = ['<span style="color:' + black + ';">' + wrongLabel + '</span>',
 # 3b:           1 (again) 2 (good) 2 (good) 2 (good)
 # 4b:           1 (again) 3 (good) 3 (good) 3 (good)
 
-if semver.Version(version) >= semver.Version("2.1.30"):
+if semver.Version(version) >= semver.Version("2.1.33"):
     from aqt import gui_hooks
 
     def two_button_mode(button_tuple, reviewer, card):
@@ -53,15 +53,11 @@ if semver.Version(version) >= semver.Version("2.1.30"):
     gui_hooks.reviewer_will_init_answer_buttons.append(two_button_mode)
     gui_hooks.reviewer_will_answer_card.append(remap_answers)
 
-elif semver.Version(version) < semver.Version("2.1.30"):
+elif semver.Version(version) < semver.Version("2.1.33"):
     # use old style hooks for old versions
     from aqt.reviewer import Reviewer
     from anki.hooks import wrap
     from aqt.qt import *
-
-    remap = {2:  [None, 1, 2, 2, 2],
-             3:  [None, 1, 2, 2, 2],
-             4:  [None, 1, 3, 3, 3]}
 
     # Replace _answerButtonList method to reduce buttons to Pass/Fail always
     def answerButtonList(self):
@@ -75,7 +71,12 @@ elif semver.Version(version) < semver.Version("2.1.30"):
 
     def AKR_answerCard(self, ease):
         count = mw.col.sched.answerButtons(mw.reviewer.card)  # Get button count
-        ease = remap[count][ease]
+        new_ease = 3  # default success, good = 3
+        if ease <= 1:  # if failed, again = 1
+            new_ease = 1
+        elif count < 4:  # if 2-3 buttons, good = 2
+            new_ease = 2
+        ease = new_ease
         __oldFunc(self, ease)
 
     __oldFunc = Reviewer._answerCard
