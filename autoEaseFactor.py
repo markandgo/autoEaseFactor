@@ -1,7 +1,5 @@
 # inspired by https://eshapard.github.io/
 
-from __future__ import annotations
-
 import math
 
 # anki interfaces
@@ -72,7 +70,7 @@ def get_starting_ease(card=mw.reviewer.card):
     return deck_starting_ease
 
 
-def suggested_factor(card=mw.reviewer.card, new_answer=None):
+def suggested_factor(card=mw.reviewer.card, new_answer=None, leashed=True):
     """Loads card history from anki and returns suggested factor"""
 
     """Wraps calculate_ease()"""
@@ -88,7 +86,8 @@ def suggested_factor(card=mw.reviewer.card, new_answer=None):
     deck_starting_ease = get_starting_ease(card)
     config_settings['starting_ease_factor'] = deck_starting_ease
 
-    return ease_calculator.calculate_ease(config_settings, card_settings)
+    return ease_calculator.calculate_ease(config_settings, card_settings,
+                                          leashed)
 
 
 def get_stats(card=mw.reviewer.card, new_answer=None):
@@ -140,9 +139,15 @@ def get_stats(card=mw.reviewer.card, new_answer=None):
     msg += f"Last factor: {last_factor}<br>"
     msg += f"MAvg factor: {round(average_ease, 2)}<br>"
     if card.queue != 2 and reviews_only:
-        msg += f"Suggested factor: NONREVIEW, NO CHANGE<br>"
+        msg += f"New factor: NONREVIEW, NO CHANGE<br>"
     else:
-        msg += f"Suggested factor: {suggested_factor(card, new_answer)}<br>"
+        new_factor = suggested_factor(card, new_answer)
+        unleashed_factor = suggested_factor(card, new_answer, leashed=False)
+        if new_factor == unleashed_factor:
+            msg += f"New factor: {new_factor}<br>"
+        else:
+            msg += f"""New factor: {new_factor}"""
+            msg += f""" (unleashed: {unleashed_factor})<br>"""
     msg += f"Rep list: {printable_rep_list}<br>"
     return msg
 

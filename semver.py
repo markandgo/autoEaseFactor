@@ -53,6 +53,8 @@ class Version:
         return retval
 
     def __lt__(self, other):
+        if type(other) is str:
+            other = Version(other)
         assert self.valid(other)
         retval = False
         retval = int(self.major) < int(other.major)

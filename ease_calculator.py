@@ -14,7 +14,7 @@ def moving_average(value_list, weight, init=None):
     return mavg
 
 
-def calculate_ease(config_settings, card_settings):
+def calculate_ease(config_settings, card_settings, leashed=True):
     """Return next ease factor based on config and card performance."""
     leash = config_settings['leash']
     target = config_settings['target']
@@ -48,18 +48,17 @@ def calculate_ease(config_settings, card_settings):
     else:
         average_ease = starting_ease_factor
     suggested_factor = int(round(average_ease * delta_ratio))
-
-    # anchor this to current_ease_factor initially
-    number_of_reviews = len(review_list)
-    ease_cap = min(max_ease, (current_ease_factor
-                   + (leash * number_of_reviews)))
-    if suggested_factor > ease_cap:
-        suggested_factor = ease_cap
-    ease_floor = max(min_ease, (current_ease_factor
-                     - (leash * number_of_reviews)))
-    if suggested_factor < ease_floor:
-        suggested_factor = ease_floor
-
+    if leashed:
+        # anchor this to current_ease_factor initially
+        number_of_reviews = len(review_list)
+        ease_cap = min(max_ease, (current_ease_factor
+                       + (leash * number_of_reviews)))
+        if suggested_factor > ease_cap:
+            suggested_factor = ease_cap
+        ease_floor = max(min_ease, (current_ease_factor
+                         - (leash * number_of_reviews)))
+        if suggested_factor < ease_floor:
+            suggested_factor = ease_floor
     return suggested_factor
 
 
