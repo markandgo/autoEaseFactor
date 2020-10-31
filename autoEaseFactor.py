@@ -82,6 +82,9 @@ def suggested_factor(card=mw.reviewer.card, new_answer=None, leashed=True):
     if new_answer is not None:
         card_settings['review_list'].append(new_answer)
     card_settings['factor_list'] = get_ease_factors(card)
+    # Ignore latest ease if you are applying algorithm from deck settings
+    if new_answer is None and len(card_settings['factor_list']) > 1:
+        card_settings['factor_list'] = card_settings['factor_list'][:-1]
 
     deck_starting_ease = get_starting_ease(card)
     config_settings['starting_ease_factor'] = deck_starting_ease
