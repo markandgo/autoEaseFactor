@@ -45,7 +45,8 @@ config_settings = {
 
 
 def get_all_reps(card=mw.reviewer.card):
-    return mw.col.db.list(("select ease from revlog where cid = ?"), card.id)
+    return mw.col.db.list("select ease from revlog where cid = ? and "
+                          "type IN (0, 1, 2, 3)", card.id)
 
 
 def get_reviews_only(card=mw.reviewer.card):
@@ -55,7 +56,8 @@ def get_reviews_only(card=mw.reviewer.card):
 
 def get_ease_factors(card=mw.reviewer.card):
     return mw.col.db.list("select factor from revlog where cid = ?"
-                          " and factor > 0", card.id)
+                          " and factor > 0 and type IN (0, 1, 2, 3)",
+                          card.id)
 
 
 def get_starting_ease(card=mw.reviewer.card):
