@@ -112,6 +112,8 @@ def get_stats(card=mw.reviewer.card, new_answer=None):
     if factor_list and len(factor_list) > 0:
         average_ease = ease_calculator.moving_average(factor_list, weight)
     else:
+        if config_settings['starting_ease_factor'] is None:
+            config_settings['starting_ease_factor'] = get_starting_ease(card)
         average_ease = config_settings['starting_ease_factor']
 
     # add last review (maybe simplify by doing this after new factor applied)
