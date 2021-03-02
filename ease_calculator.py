@@ -17,10 +17,10 @@ def moving_average(value_list, weight, init=None):
 def calculate_ease(config_settings, card_settings, leashed=True):
     """Return next ease factor based on config and card performance."""
     leash = config_settings['leash']
-    target = config_settings['target']
+    target = config_settings['target_ratio']
     max_ease = config_settings['max_ease']
     min_ease = config_settings['min_ease']
-    weight = config_settings['weight']
+    weight = config_settings['moving_average_weight']
     starting_ease_factor = config_settings['starting_ease_factor']
 
     review_list = card_settings['review_list']
