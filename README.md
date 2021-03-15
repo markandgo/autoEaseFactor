@@ -44,8 +44,9 @@ Then use this code:
 #### Manual installation
 
 Create a new folder named *autoEaseFactor* in your Anki addons
-directory. Save <a href="http://__init__.py" rel="nofollow">__init__.py</a>, <a href="http://autoEaseFactor.py" rel="nofollow">autoEaseFactor.py</a> and <a href="http://YesOrNo.py" rel="nofollow">YesOrNo.py</a>
-to this folder. If you don't want to use <a href="http://YesOrNo.py" rel="nofollow">YesOrNo.py</a>, you can simply disable 2-button mode in settings.
+directory. Save all add-on files to this folder. If you don't want to use
+Two Button mode, it's still recommended you include the file to prevent
+errors, but you can simply disable this mode in settings.
 
 ### Configuration
 There are a few options that can be configured by editing the addon:
@@ -65,18 +66,19 @@ ease. This is "per mille," so 5000 = 500%.
 setting this to false (though saving mental load on each review is the primary
 benefit of this add-on, so I would recommend you leave this true if you can).
 
-## <a href="http://YesOrNo.py" rel="nofollow">YesOrNo.py</a>
+## Two Button Mode
 Hard and easy add more choices that delay reviews and make you responsible for
 determing your ideal ease rating. The ease factor algorithm adjusts ease for
 you, so you just need to choose either "Again" or "Good" on any given card.
 
-The <a href="http://YesOrNo.py" rel="nofollow">YesOrNo.py</a> addon changes 
-your options to Pass/Fail to help streamline your self evaluation, similar to low-key 
-Anki and ja dark's work that inspired it.
+The Two-Button file in the addon changes your options to Pass/Fail to help
+streamline your self evaluation, similar to low-key Anki and ja dark's work
+that inspired it.
 
-I suggest that you use the YesOrNo addon and that you disable
+I suggest that you use the TwoButton addon and that you disable
 *Show next review time above answer buttons* in Tools &gt; Preferences...
-Seeing the next review times will just distract you from studying.
+The next review times are misleading, they don't take into account the adjustments
+from this add-on and can distract you from studying.
 
 If you just want to try this out, but you're worried about losing all the ease factors you've built up so far, 
 the latest version lets you export a deck's current ease factors and re-import them later.

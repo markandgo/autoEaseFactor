@@ -27,10 +27,11 @@ BUTTON_LABEL = ['<span style="color:' + black + ';">' + wrongLabel + '</span>',
 # 3b:           1 (again) 2 (good) 2 (good) 2 (good)
 # 4b:           1 (again) 3 (good) 3 (good) 3 (good)
 
+
 if semver.Version(version) >= semver.Version("2.1.33"):
     from aqt import gui_hooks
 
-    def two_button_mode(button_tuple, reviewer, card):
+    def two_button(button_tuple, reviewer, card):
         button_count = mw.col.sched.answerButtons(card)
         if button_count in [2, 3]:
             # for old scheduler
@@ -50,9 +51,6 @@ if semver.Version(version) >= semver.Version("2.1.33"):
             new_ease = 2
         return (ease_tuple[0], new_ease)
 
-    gui_hooks.reviewer_will_init_answer_buttons.append(two_button_mode)
-    gui_hooks.reviewer_will_answer_card.append(remap_answers)
-
 elif semver.Version(version) < semver.Version("2.1.33"):
     # use old style hooks for old versions
     from aqt.reviewer import Reviewer
@@ -69,7 +67,7 @@ elif semver.Version(version) < semver.Version("2.1.33"):
         else:
             return abl + ((3, BUTTON_LABEL[1]),)
 
-    def AKR_answerCard(self, ease):
+    def AEF_answerCard(self, ease):
         count = mw.col.sched.answerButtons(mw.reviewer.card)  # Get button count
         new_ease = 3  # default success, good = 3
         if ease <= 1:  # if failed, again = 1
@@ -77,10 +75,10 @@ elif semver.Version(version) < semver.Version("2.1.33"):
         elif count < 4:  # if 2-3 buttons, good = 2
             new_ease = 2
         ease = new_ease
-        __oldFunc(self, ease)
+        __originalAnswerCard(self, ease)
 
-    __oldFunc = Reviewer._answerCard
-    Reviewer._answerCard = AKR_answerCard
+    __originalAnswerCard = Reviewer._answerCard
+    Reviewer._answerCard = AEF_answerCard
 
     def myAnswerButtons(self, _old) -> str:
         times = []
@@ -107,5 +105,24 @@ elif semver.Version(version) < semver.Version("2.1.33"):
                     </script>"""
         return buf + script
 
-    Reviewer._answerButtons =\
-        wrap(Reviewer._answerButtons, myAnswerButtons, 'around')
+    __originalAnswerButtons = Reviewer._answerButtons
+    AEF_answerButtons = wrap(Reviewer._answerButtons, myAnswerButtons, 'around')
+    Reviewer._answerButtons = AEF_answerButtons
+        
+
+def disable_two_button():
+    if semver.Version(version) >= semver.Version("2.1.33"):
+        gui_hooks.reviewer_will_answer_card.remove(remap_answers)
+        gui_hooks.reviewer_will_init_answer_buttons.remove(two_button)
+    elif semver.Version(version) < semver.Version("2.1.33"):
+        Reviewer._answerCard = __originalAnswerCard
+        Reviewer._answerButtons = __originalAnswerButtons
+
+
+def enable_two_button():
+    if semver.Version(version) >= semver.Version("2.1.33"):
+        gui_hooks.reviewer_will_init_answer_buttons.append(two_button)
+        gui_hooks.reviewer_will_answer_card.append(remap_answers)
+    elif semver.Version(version) < semver.Version("2.1.33"):
+        Reviewer._answerCard = AEF_answerCard
+        Reviewer._answerButtons = AEF_answerButtons
