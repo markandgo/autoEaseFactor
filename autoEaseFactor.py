@@ -28,11 +28,9 @@ def set_button_mode(card):
         deck_id = odid
     config = get_current_config(deck_id)
     if config['two_button_mode']:
-        if len(gui_hooks.reviewer_will_answer_card._hooks) < 2:
-            two_button.enable_two_button()
+        two_button.enable_two_button()
     else:
-        if len(gui_hooks.reviewer_will_answer_card._hooks) > 1:
-            two_button.disable_two_button()
+        two_button.disable_two_button()
     
 gui_hooks.reviewer_did_show_question.append(set_button_mode)
 
@@ -244,7 +242,8 @@ def get_stats(card=mw.reviewer.card, new_answer=None):
         if not config['enabled']:
             msg += f"Using config from {settings_deck}<br>"
             msg += f"AEF DISABLED ON THIS DECK<br>"
-            msg += f"New factor: Last factor ({last_factor}) +150 ease for easy, -200 for Again, -150 for Hard<br>"
+            msg += f"Last factor: {last_factor}<br>"
+            msg += f"New factor: Easy +150, Good +0, Hard -150, Again -200<br>"
         elif card.queue != 2 and config['reviews_only']:
             msg += f"New factor: NONREVIEW, NO CHANGE<br>"
         else:
