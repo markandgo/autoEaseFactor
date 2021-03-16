@@ -27,12 +27,12 @@ def set_button_mode(card):
     else:
         deck_id = odid
     config = get_current_config(deck_id)
-    msg = f"odid: {str(odid)}, did: {str(did)}, 2bMode: {str(config['two_button_mode'])}"
-    tooltip(msg, 9000)
     if config['two_button_mode']:
-        two_button.enable_two_button()
+        if len(gui_hooks.reviewer_will_answer_card._hooks) < 2:
+            two_button.enable_two_button()
     else:
-        two_button.disable_two_button()
+        if len(gui_hooks.reviewer_will_answer_card._hooks) > 1:
+            two_button.disable_two_button()
     
 gui_hooks.reviewer_did_show_question.append(set_button_mode)
 
@@ -83,14 +83,11 @@ def get_current_config(deck_id):
         deck_names.append(parent_deck(deck_names[-1]))
 
     # update config with each deck, from parentmost to juniormost
-    msg = ""
     deck_names.reverse()
     for d in deck_names:
         this_deck_settings = all_deck_settings.get(d, {})
         current_config = {**current_config, **this_deck_settings}
 
-        # msg += str(current_config) + "<br><br>"
-        # tooltip(msg, 9000)
     return current_config
 
 
@@ -247,7 +244,7 @@ def get_stats(card=mw.reviewer.card, new_answer=None):
         if not config['enabled']:
             msg += f"Using config from {settings_deck}<br>"
             msg += f"AEF DISABLED ON THIS DECK<br>"
-            msg += f"New factor: Last factor ({last_factor}) * 1.15 for easy, 0.80 for Again, or 0.85 for Hard<br>"
+            msg += f"New factor: Last factor ({last_factor}) +150 ease for easy, -200 for Again, -150 for Hard<br>"
         elif card.queue != 2 and config['reviews_only']:
             msg += f"New factor: NONREVIEW, NO CHANGE<br>"
         else:

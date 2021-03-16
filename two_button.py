@@ -111,6 +111,7 @@ elif semver.Version(version) < semver.Version("2.1.33"):
         
 
 def disable_two_button():
+    # TODO confirm two button enabled
     if semver.Version(version) >= semver.Version("2.1.33"):
         gui_hooks.reviewer_will_answer_card.remove(remap_answers)
         gui_hooks.reviewer_will_init_answer_buttons.remove(two_button)
@@ -120,6 +121,7 @@ def disable_two_button():
 
 
 def enable_two_button():
+    # confirm two button NOT enabled
     if semver.Version(version) >= semver.Version("2.1.33"):
         gui_hooks.reviewer_will_init_answer_buttons.append(two_button)
         gui_hooks.reviewer_will_answer_card.append(remap_answers)
