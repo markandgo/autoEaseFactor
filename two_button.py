@@ -31,6 +31,7 @@ BUTTON_LABEL = ['<span style="color:' + black + ';">' + wrongLabel + '</span>',
 
 
 if semver.Version(version) >= semver.Version("2.1.33"):
+    # mw.col.schedVer()
     from aqt import gui_hooks
 
     def two_button(button_tuple, reviewer, card):
