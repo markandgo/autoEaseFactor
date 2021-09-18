@@ -3,6 +3,8 @@
 Dynamically adjusts ease factor on cards automatically after each rep, constantly seeking the
 right ease adjustment to hit a target success rate.
 
+WARNING: Please note I currently lack the capacity to test new patches and features. Very sorry, but welcome forks from anyone who can take this on.
+
 See: <a href="https://eshapard.github.io/anki/thoughts-on-a-new-algorithm-for-anki.html" rel="nofollow">eshapard's "Thoughts on a new algorithm for Anki</a> for the original rationale.
 
 Important: **You must NOT/NOT use an interval modifier in your deck options**.
