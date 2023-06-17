@@ -1,0 +1,1 @@
+{"name": "Auto Ease Factor", "mod": 1616350264, "min_point_version": 23, "max_point_version": 42, "branch_index": 1, "disabled": false, "config": {"leash": 100, "max_ease": 3000, "min_ease": 1000, "moving_average_weight": 0.2, "reviews_only": false, "stats_duration": 10000, "stats_enabled": true, "target_ratio": 0.9, "two_button_mode": false}}

@@ -60,8 +60,8 @@ def launch_simulator():
         config_settings['leash'] = int(values['leash'])
         config_settings['min_ease'] = int(values['min_ease'])
         config_settings['max_ease'] = int(values['max_ease'])
-        config_settings['moving_average_weight'] = float(values['weight'])
-        config_settings['target_ratio'] = float(values['target'])
+        config_settings['weight'] = float(values['weight'])
+        config_settings['target'] = float(values['target'])
         config_settings['starting_ease_factor'] = int(values['starting_ease_factor'])
         card_settings = {}
         card_settings['review_list'] = [int(_) for _ in

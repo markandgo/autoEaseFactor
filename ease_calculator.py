@@ -1,9 +1,10 @@
 import math
 
 
-def moving_average(value_list, weight, init=None):
+def moving_average(value_list, weight, init=None, window_size=999):
     """Provide (float) weighted moving average for list of values."""
     assert len(value_list) > 0
+    value_list = value_list[-window_size:]
     if init is None:
         mavg = sum(value_list)/len(value_list)
     else:
@@ -17,11 +18,12 @@ def moving_average(value_list, weight, init=None):
 def calculate_ease(config_settings, card_settings, leashed=True):
     """Return next ease factor based on config and card performance."""
     leash = config_settings['leash']
-    target = config_settings['target_ratio']
+    target = config_settings['target']
     max_ease = config_settings['max_ease']
     min_ease = config_settings['min_ease']
-    weight = config_settings['moving_average_weight']
+    weight = config_settings['weight']
     starting_ease_factor = config_settings['starting_ease_factor']
+    window_size = config_settings['window_size']
 
     review_list = card_settings['review_list']
     factor_list = card_settings['factor_list']
@@ -35,7 +37,7 @@ def calculate_ease(config_settings, card_settings, leashed=True):
         success_rate = target
     else:
         success_list = [int(_ > 1) for _ in review_list]
-        success_rate = moving_average(success_list, weight, init=target)
+        success_rate = moving_average(success_list, weight, init=target, window_size=window_size)
 
     # Ebbinghaus formula
     if success_rate > 0.99:
@@ -44,7 +46,7 @@ def calculate_ease(config_settings, card_settings, leashed=True):
         success_rate = 0.01
     delta_ratio = math.log(target) / math.log(success_rate)
     if factor_list and len(factor_list) > 0:
-        average_ease = moving_average(factor_list, weight)
+        average_ease = moving_average(factor_list, weight, window_size=window_size)
     else:
         average_ease = starting_ease_factor
     suggested_factor = int(round(average_ease * delta_ratio))

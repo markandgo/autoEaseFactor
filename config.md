@@ -1,5 +1,10 @@
 The following options are configurable for this add on:
 
+**window_size**
+
+- Controls the lookback window size. The smaller the window size, the  
+fewer older reviews will be considered.
+- default 999
 
 **leash**
 
@@ -14,7 +19,7 @@ reviews this can still change your ease by over 1000 points.
 **max_ease**
 
 - The maximum ease you want any of your cards to reach.
-- default: 5000 (500%)
+- default: 3000 (300%)
 - Note that once you get over 5-7k the time savings are minimal and the risks
 of miscalculation are higher.
 
@@ -26,6 +31,8 @@ of miscalculation are higher.
 **moving_average_weight**
 
 - Specifies how much weight to place on more recent reviews over old reviews.
+A value of 1.0 means only the most recent review will be considered.
+A value of 0 will weigh all reviews equally.
 Note: this is very senstive, values between 0.07 and 0.3 are about right for
 most people.
 - default: 0.2
