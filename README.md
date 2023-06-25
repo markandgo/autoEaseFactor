@@ -3,8 +3,6 @@
 Dynamically adjusts ease factor on cards automatically after each rep, constantly seeking the
 right ease adjustment to hit a target success rate.
 
-WARNING: Please note I currently lack the capacity to test new patches and features. Very sorry, but welcome forks from anyone who can take this on.
-
 See: <a href="https://eshapard.github.io/anki/thoughts-on-a-new-algorithm-for-anki.html" rel="nofollow">eshapard's "Thoughts on a new algorithm for Anki</a> for the original rationale.
 
 Important: **You must NOT/NOT use an interval modifier in your deck options**.
@@ -46,9 +44,8 @@ Then use this code:
 #### Manual installation
 
 Create a new folder named *autoEaseFactor* in your Anki addons
-directory. Save all add-on files to this folder. If you don't want to use
-Two Button mode, it's still recommended you include the file to prevent
-errors, but you can simply disable this mode in settings.
+directory. Save <a href="http://__init__.py" rel="nofollow">__init__.py</a>, <a href="http://autoEaseFactor.py" rel="nofollow">autoEaseFactor.py</a> and <a href="http://YesOrNo.py" rel="nofollow">YesOrNo.py</a>
+to this folder. If you don't want to use <a href="http://YesOrNo.py" rel="nofollow">YesOrNo.py</a>, you can simply disable 2-button mode in settings.
 
 ### Configuration
 There are a few options that can be configured by editing the addon:
@@ -68,19 +65,18 @@ ease. This is "per mille," so 5000 = 500%.
 setting this to false (though saving mental load on each review is the primary
 benefit of this add-on, so I would recommend you leave this true if you can).
 
-## Two Button Mode
+## <a href="http://YesOrNo.py" rel="nofollow">YesOrNo.py</a>
 Hard and easy add more choices that delay reviews and make you responsible for
 determing your ideal ease rating. The ease factor algorithm adjusts ease for
 you, so you just need to choose either "Again" or "Good" on any given card.
 
-The Two-Button file in the addon changes your options to Pass/Fail to help
-streamline your self evaluation, similar to low-key Anki and ja dark's work
-that inspired it.
+The <a href="http://YesOrNo.py" rel="nofollow">YesOrNo.py</a> addon changes 
+your options to Pass/Fail to help streamline your self evaluation, similar to low-key 
+Anki and ja dark's work that inspired it.
 
-I suggest that you use the TwoButton addon and that you disable
+I suggest that you use the YesOrNo addon and that you disable
 *Show next review time above answer buttons* in Tools &gt; Preferences...
-The next review times are misleading, they don't take into account the adjustments
-from this add-on and can distract you from studying.
+Seeing the next review times will just distract you from studying.
 
 If you just want to try this out, but you're worried about losing all the ease factors you've built up so far, 
 the latest version lets you export a deck's current ease factors and re-import them later.

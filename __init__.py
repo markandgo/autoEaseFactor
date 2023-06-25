@@ -1,3 +1,4 @@
 from . import autoEaseFactor
 from aqt import mw
-from . import two_button
+if mw.addonManager.getConfig(__name__).get('two_button_mode'):
+    from . import YesOrNo
