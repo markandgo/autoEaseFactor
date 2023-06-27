@@ -13,13 +13,49 @@ from aqt.utils import tooltip
 from . import ease_calculator
 from . import autoEaseFactor
 
+# from .logic import (
+    # get_straight_len,
+    # get_easeplus,
+# )
+
+# from ..utils import syncDisabled
+
+
+base_path = mw.addonManager._userFilesPath(__name__.split(".")[0])
+
+
+# def log_sync(crt: int, logs: List[str]) -> None:
+    # sync_log = Path(base_path) / Path("sync_log")
+
+    # with sync_log.open("at") as f:
+        # f.write(f"### Ease Changes applied in collection {crt} on {datetime.now()}:\n")
+        # f.write("\n".join(logs) + "\n")
+
+
 def display_sync_info(count: int):
+    # MSG = (
+        # f"Awarded Straight Reward to {count} card!"
+        # if count == 1
+        # else f"Awarded Straight Rewards to {count} cards!"
+    # )
     MSG = (
         f"Adjusted ease factor to {count} card!"
         if count == 1
         else f"Adjusted ease factor to {count} cards!"
     )
     tooltip(MSG)
+
+'''
+def check_cid(card: Card, skip: int) -> int:
+    # straightlen = get_straight_len(card.id, skip)
+    # easeplus = get_easeplus(card, straightlen)
+
+    card.factor += easeplus
+    card.flush()
+
+    # short factor
+    return int(easeplus / 10)
+'''
 
 def maybe_to_card(revcid: int) -> Optional[Card]:
     try:
@@ -31,12 +67,22 @@ def maybe_to_card(revcid: int) -> Optional[Card]:
         # card was reviewed remotely, but deleted locally
         return None
 
+
+# def check_per_review(card: Card, skip: int) -> List[int]:
+    # easeplus_shortened = check_cid(card, skip)
+    # return (card.id, easeplus_shortened)
+
+
 def check(revcid: int, count: int) -> List[int]:
     if card := maybe_to_card(revcid):
         # if a card was reviewed multiple times
         # we need to skip the most recent reviews for consideration
-        autoEaseFactor.suggested_factor(card)
-        return 1
+        # return map(lambda skip: check_per_review(card, skip), range(count))
+        old_factor = card.factor
+        card.factor = autoEaseFactor.suggested_factor(card)
+        card.flush()
+        if old_factor != card.factor: return 1
+    # return []
     return 0
 
 
@@ -56,12 +102,19 @@ def flat_map(f: Callable[[Any], List[Any]], xs: List[Any]) -> List[Any]:
         ys.extend(f(x))
     return ys
 
+# 1. Count the number of cards that were reviewed since the last check
+# 2. Iterate over each card and its review count
+# 3. Get straight length at each review and apply ease factor
+# 4.
+# def check_cids(reviewed_cids: List[int]) -> List[Tuple[int, int]]:
 def check_cids(reviewed_cids: List[int]) -> int:
     cid_counter = make_cid_counter(reviewed_cids)
     count = 0
-    for cid_and_review_count in cid_counter.items():
-        count += check(*cid_and_review_count)
+    for x in cid_counter.items():
+        count += check(*x)
     return count
+    # return flat_map(lambda data: check(*data), cid_counter.items())
+
 
 def create_comparelog(oldids: List[int]) -> None:
     path = mw.pm.collectionPath()
@@ -69,6 +122,8 @@ def create_comparelog(oldids: List[int]) -> None:
     # flatten ids
     oldids.extend(
         [id for sublist in mw.col.db.execute("SELECT id FROM revlog") for id in sublist]
+        # if not syncDisabled.value
+        # else []
     )
 
 
@@ -87,8 +142,16 @@ def after_sync(oldids: List[int]) -> None:
         for cid in sublist
     ]
 
+    # result = check_cids(reviewed_cids)
     count = check_cids(reviewed_cids)
     display_sync_info(count)
+
+    # filtered_logs = [f"cid:{r[0]} easeplus:{r[1]}" for r in result if r[1] > 0]
+    # filtered_length = len(filtered_logs)
+
+    # if filtered_length > 0:
+        # log_sync(mw.col.crt, filtered_logs)
+        # display_sync_info(filtered_length)
 
     oldids.clear()
 
